@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Status Logger App</title>
+<style>
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.app {
+    width: 375px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 40px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    max-height: 90vh;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.top-bar {
+    height: 50px;
+    background: #4a90e2;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+#pasteArea {
+    flex: 1;
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    margin: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    color: #888;
+    font-size: 14px;
+    min-height: 200px;
+    transition: all 0.3s ease;
+    padding: 10px;
+    overflow-y: auto;
+    text-align: center;
+    position: relative;
+}
+
+#pasteArea.hover {
+    border-color: #4a90e2;
+    background-color: #e6f0ff;
+    color: #555;
+}
+
+#pasteArea img {
+    max-width: 48%;
+    margin: 5px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+#pasteArea img:hover {
+    transform: scale(1.05);
+}
+
+#watermarkPreview {
+    position: absolute;
+    pointer-events: none;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0.9;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.4);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    padding: 5px 15px;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+#output {
+    margin: 15px;
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+#output img {
+    width: 100%;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s ease;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 15px;
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+    z-index: 10;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    gap: 5px;
+}
+
+.controls button, select, input {
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.controls button {
+    background: #4a90e2;
+    color: white;
+}
+
+.controls button:hover {
+    background: #357ABD;
+    transform: scale(1.05);
+}
+
+#refreshButton {
+    background: #f44336;
+}
+
+#refreshButton:hover {
+    background: #c12a1f;
+    transform: scale(1.05);
+}
+
+select, input {
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+@media(max-width: 400px){
+    .app { width: 100%; border-radius: 25px; }
+    #pasteArea img { max-width: 100%; }
+    .controls { flex-direction: column; align-items: stretch; }
+    select, input { margin-bottom: 5px; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+    <div class="top-bar">Status Logger</div>
+
+    <div id="pasteArea">
+        Paste image(s) here using Ctrl+V
+        <div id="watermarkPreview"></div>
+    </div>
+
+    <div id="output"></div>
+
+    <div class="controls">
+        <select id="status">
+            <option value="Time in">Time in</option>
+            <option value="Short Break">Short Break</option>
+            <option value="Meal Break">Meal Break</option>
+            <option value="Wellness">Wellness</option>
+            <option value="None">None</option>
+        </select>
+        <select id="fontSelect">
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Tahoma">Tahoma</option>
+            <option value="Courier New">Courier New</option>
+        </select>
+        <input type="number" id="fontSize" placeholder="Size" value="20" min="10" max="100">
+        <input type="color" id="fontColor" value="#ffffff">
+        <select id="position">
+            <option value="top-left">Top Left</option>
+            <option value="top-center">Top Center</option>
+            <option value="top-right">Top Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="bottom-center" selected>Bottom Center</option> 
+            <option value="bottom-right">Bottom Right</option>
+            <option value="center">Center</option>
+        </select>
+        <button id="generateImage">Generate</button>
+        <button id="refreshButton">Refresh</button>
+    </div>
+</div>
+
+<script>
+const pasteArea = document.getElementById('pasteArea');
+const watermarkPreview = document.getElementById('watermarkPreview');
+const generateButton = document.getElementById('generateImage');
+const refreshButton = document.getElementById('refreshButton');
+const outputDiv = document.getElementById('output');
+
+const statusSelect = document.getElementById('status');
+const fontSelect = document.getElementById('fontSelect');
+const fontSizeInput = document.getElementById('fontSize');
+const fontColorInput = document.getElementById('fontColor');
+const positionSelect = document.getElementById('position');
+
+let images = [];
+
+// Drag & paste highlight
+pasteArea.addEventListener('dragenter', () => pasteArea.classList.add('hover'));
+pasteArea.addEventListener('dragleave', () => pasteArea.classList.remove('hover'));
+pasteArea.addEventListener('dragover', e => e.preventDefault());
+pasteArea.addEventListener('drop', e => e.preventDefault());
+
+// Paste images
+pasteArea.addEventListener('paste', event => {
+    const items = event.clipboardData.items;
+    for(let i=0;i<items.length;i++){
+        if(items[i].type.indexOf('image')!==-1){
+            const file = items[i].getAsFile();
+            const reader = new FileReader();
+            reader.onload = e=>{
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                pasteArea.appendChild(img);
+                images.push(img);
+                if(images.length>2){
+                    images.shift();
+                    pasteArea.removeChild(pasteArea.querySelector('img'));
+                }
+                updateWatermarkPreview();
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+});
+
+// Update live watermark preview
+function updateWatermarkPreview(){
+    const text = statusSelect.value==='None'? new Date().toLocaleString() : `${statusSelect.value} | ${new Date().toLocaleString()}`;
+    const font = fontSelect.value;
+    const fontSize = parseInt(fontSizeInput.value) || 20;
+    const fontColor = fontColorInput.value;
+    const position = positionSelect.value;
+
+    watermarkPreview.textContent = text;
+    watermarkPreview.style.fontFamily = font;
+    watermarkPreview.style.fontSize = fontSize+'px';
+    watermarkPreview.style.color = fontColor;
+
+    if(images.length>0){
+        const img = images[images.length-1];
+        const rect = img.getBoundingClientRect();
+        const areaRect = pasteArea.getBoundingClientRect();
+        let x=0, y=0;
+        switch(position){
+            case 'top-left': x = rect.left - areaRect.left; y = rect.top - areaRect.top; break;
+            case 'top-center': x = rect.left - areaRect.left + (rect.width - watermarkPreview.offsetWidth)/2; y = rect.top - areaRect.top; break;
+            case 'top-right': x = rect.right - areaRect.left - watermarkPreview.offsetWidth; y = rect.top - areaRect.top; break;
+            case 'bottom-left': x = rect.left - areaRect.left; y = rect.bottom - areaRect.top - watermarkPreview.offsetHeight; break;
+            case 'bottom-center': x = rect.left - areaRect.left + (rect.width - watermarkPreview.offsetWidth)/2; y = rect.bottom - areaRect.top - watermarkPreview.offsetHeight; break;
+            case 'bottom-right': x = rect.right - areaRect.left - watermarkPreview.offsetWidth; y = rect.bottom - areaRect.top - watermarkPreview.offsetHeight; break;
+            case 'center': x = rect.left - areaRect.left + (rect.width - watermarkPreview.offsetWidth)/2; y = rect.top - areaRect.top + (rect.height - watermarkPreview.offsetHeight)/2; break;
+        }
+        watermarkPreview.style.left = x+'px';
+        watermarkPreview.style.top = y+'px';
+        watermarkPreview.style.display = 'block';
+    } else {
+        watermarkPreview.style.display = 'none';
+    }
+}
+
+// Update preview on change
+[statusSelect, fontSelect, fontSizeInput, fontColorInput, positionSelect].forEach(el=>{
+    el.addEventListener('input', updateWatermarkPreview);
+    el.addEventListener('change', updateWatermarkPreview);
+});
+
+// Generate final image
+generateButton.addEventListener('click', () => {
+    if(images.length===0){ alert('Please paste at least one image.'); return; }
+
+    const status = statusSelect.value;
+    const font = fontSelect.value;
+    const fontSize = parseInt(fontSizeInput.value) || 20;
+    const fontColor = fontColorInput.value;
+    const position = positionSelect.value;
+    const timestamp = new Date().toLocaleString();
+
+    const width = images.reduce((sum,img)=>sum+img.naturalWidth,0);
+    const height = Math.max(...images.map(img=>img.naturalHeight));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+
+    let x=0;
+    images.forEach(img=>{
+        ctx.drawImage(img, x, 0, img.naturalWidth, img.naturalHeight);
+        x += img.naturalWidth;
+    });
+
+    const text = status==='None'? timestamp : `${status} | ${timestamp}`;
+    ctx.font = `${fontSize}px ${font}`;
+    ctx.textBaseline = 'top';
+    const textWidth = ctx.measureText(text).width;
+    const padding = 10;
+    let rectX, rectY;
+
+    switch(position){
+        case 'top-left': rectX = padding; rectY = padding; break;
+        case 'top-center': rectX = (width - textWidth)/2; rectY = padding; break;
+        case 'top-right': rectX = width - textWidth - padding; rectY = padding; break;
+        case 'bottom-left': rectX = padding; rectY = height - fontSize - padding; break;
+        case 'bottom-center': rectX = (width - textWidth)/2; rectY = height - fontSize - padding; break;
+        case 'bottom-right': rectX = width - textWidth - padding; rectY = height - fontSize - padding; break;
+        case 'center': rectX = (width - textWidth)/2; rectY = (height - fontSize)/2; break;
+    }
+
+    // Premium watermark background
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
+    ctx.fillRect(rectX-10, rectY-5, textWidth+20, fontSize+10);
+
+    ctx.fillStyle = fontColor;
+    ctx.shadowColor = 'rgba(0,0,0,0.4)';
+    ctx.shadowBlur = 3;
+    ctx.fillText(text, rectX, rectY);
+
+    outputDiv.innerHTML='';
+    const finalImg=new Image();
+    finalImg.src = canvas.toDataURL('image/png');
+    outputDiv.appendChild(finalImg);
+
+    canvas.toBlob(async blob=>{
+        if(!blob) return;
+        try{
+            await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+            console.log('Copied to clipboard!');
+        }catch(err){
+            console.error('Copy failed',err);
+        }
+    },'image/png');
+
+    images=[];
+    pasteArea.innerHTML='Paste image(s) here using Ctrl+V';
+    watermarkPreview.style.display = 'none';
+});
+
+// Refresh
+refreshButton.addEventListener('click',()=>{
+    images=[];
+    pasteArea.innerHTML='Paste image(s) here using Ctrl+V';
+    outputDiv.innerHTML='';
+    statusSelect.selectedIndex=0;
+    positionSelect.value = 'bottom-center';
+    watermarkPreview.style.display='none';
+});
+</script>
+</body>
+</html>
