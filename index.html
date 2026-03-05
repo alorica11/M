@@ -270,16 +270,29 @@ const dragbar=document.getElementById("dragbar"), preview=document.getElementByI
 dragbar.addEventListener("mousedown",()=>{document.addEventListener("mousemove",resize); document.addEventListener("mouseup",()=>{document.removeEventListener("mousemove",resize);},{once:true});});
 function resize(e){preview.style.width=window.innerWidth-e.clientX+"px";}
 
-// --- Rephrase Button now just copies the appeal reason ---
+// --- Rephrase Button: copy reason text AND open Google AI with grammar correction ---
 document.getElementById("rephraseBtn").addEventListener("click", () => {
-  const text = document.getElementById("finalOutput").textContent.trim();
-  if(!text){ alert("Your appeal text is empty."); return; }
+  const reasonText = document.getElementById("reasonInput").value.trim();
+  if(!reasonText){ 
+    alert("Your appeal reason is empty."); 
+    return; 
+  }
 
-  navigator.clipboard.writeText(text).then(() => {
-    alert("Appeal reason copied to clipboard! ✅");
+  // Copy reason text to clipboard
+  navigator.clipboard.writeText(reasonText).then(() => {
+    const status = document.getElementById("copyStatus");
+    status.classList.remove("hidden");
+    setTimeout(() => { status.classList.add("hidden"); }, 2000);
   }).catch(() => {
-    alert("Failed to copy. Please copy manually.");
+    alert("Failed to copy reason text to clipboard.");
   });
+
+  // Open Google AI with reason text for rephrasing & grammar correction
+  const baseUrl = "https://www.google.com/ai"; 
+  const params = new URLSearchParams({
+    prompt: "Please rephrase and correct the grammar of my appeal reason:\n\n" + reasonText
+  });
+  window.open(baseUrl + "?" + params.toString(), "_blank");
 });
   
 </script>
