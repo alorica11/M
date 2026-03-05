@@ -2,362 +2,256 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iPhone 17 Premium Logger</title>
+<title>Appeal Generator</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-/* --- Body --- */
-body {
-    margin:0;
-    padding:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    background: linear-gradient(145deg, #cfd6e0, #e6ebf1);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-/* --- iPhone 17 Frame --- */
-.iphone-frame {
-    width: 390px;
-    height: 844px;
-    border-radius: 60px;
-    background: linear-gradient(145deg,#f0f0f3,#d1d1d5);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.4);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-}
-.iphone-frame::before {
-    content:'';
-    position:absolute;
-    top:0; left:0; right:0; bottom:0;
-    border-radius: 60px;
-    border: 4px solid rgba(200,200,200,0.6);
-    pointer-events:none;
-}
-
-/* --- Screen --- */
-.screen {
-    width: 360px;
-    height: 760px;
-    margin-top: 10px;
-    border-radius: 50px;
-    background: linear-gradient(145deg,#fefefe,#e0e0e0);
-    overflow: hidden;
-    position: relative;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.05), inset 0 0 10px rgba(255,255,255,0.1);
-    display: flex;
-    flex-direction: column;
-}
-
-/* --- Notch --- */
-.notch {
-    width: 210px;
-    height: 32px;
-    background: #000;
-    border-radius: 0 0 18px 18px;
-    margin: 10px auto 5px;
-    position: relative;
-    box-shadow: inset 0 -1px 4px rgba(255,255,255,0.2);
-}
-.notch::before {
-    content:'';
-    position:absolute;
-    top:8px; left:50%;
-    transform:translateX(-50%);
-    width:60px; height:6px;
-    background: rgba(255,255,255,0.3);
-    border-radius:3px;
-}
-.notch::after {
-    content:'';
-    position:absolute;
-    top:8px; left:10px;
-    width:10px; height:10px;
-    background: rgba(255,255,255,0.3);
-    border-radius:50%;
-}
-
-/* --- Top Bar --- */
-.top-bar {
-    text-align:center;
-    font-weight:600;
-    color:#fff;
-    font-size:18px;
-    margin-bottom:10px;
-}
-
-/* --- Paste Area --- */
-#pasteArea {
-    flex:1;
-    margin:10px 20px;
-    border:2px dashed #ccc;
-    border-radius:25px;
-    background:#f8f8f8;
-    color:#888;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-wrap: wrap;
-    min-height:200px;
-    overflow-y:auto;
-    font-size:16px;
-    text-align:center;
-    position:relative;
-    padding:10px;
-}
-#pasteArea.hover { border-color:#4a90e2; background:#f0f7ff; color:#555; }
-#pasteArea img {
-    max-width:40%;
-    margin:5px;
-    border-radius:15px;
-    box-shadow:0 5px 25px rgba(0,0,0,0.25);
-    transition: transform 0.3s ease;
-}
-#pasteArea img:hover { transform: scale(1.05); }
-
-/* --- Output --- */
-#output {
-    margin:10px 20px 20px;
-    flex:none;
-    max-height:250px;
-    overflow-y:auto;
-}
-#output img {
-    width:100%;
-    border-radius:25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    display:block;
-}
-
-/* --- Controls --- */
-.controls {
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:space-around;
-    padding:10px 15px;
-    background:rgba(255,255,255,0.85);
-    backdrop-filter: blur(12px);
-    border-top-left-radius:30px;
-    border-top-right-radius:30px;
-    gap:5px;
-}
-.controls select, .controls input, .controls button {
-    border-radius:20px;
-    padding:8px 12px;
-    font-size:14px;
-    border:none;
-    cursor:pointer;
-    box-shadow:0 5px 15px rgba(0,0,0,0.15);
-    transition: all 0.3s;
-}
-.controls button { background:#4a90e2; color:white; }
-.controls button:hover { background:#357ABD; transform:scale(1.05); }
-#refreshButton { background:#f44336; }
-#refreshButton:hover { background:#c12a1f; transform:scale(1.05); }
-select,input { background:#fff; border:1px solid #ccc; }
-
-/* --- Home Indicator --- */
-.home-indicator {
-    width:134px;
-    height:5px;
-    background:rgba(0,0,0,0.3);
-    border-radius:5px;
-    margin:10px auto;
-}
-
-/* --- Reflections --- */
-.screen::before {
-    content:'';
-    position:absolute;
-    top:0; left:0; right:0; bottom:0;
-    background: linear-gradient(120deg, rgba(255,255,255,0.2), transparent 50%, rgba(255,255,255,0.05));
-    pointer-events:none;
-}
-
-/* --- Responsive --- */
-@media(max-width:400px){
-    .iphone-frame { width:100%; height:90vh; border-radius:40px; }
-    #pasteArea img { max-width:40%; }
-    .controls { flex-direction:column; align-items:stretch; }
-}
+body{background:#f6f8fc;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;margin:0;}
+.app{height:100vh;display:flex;}
+.sidebar{width:220px;background:white;border-right:1px solid #e5e7eb;}
+.topbar{height:64px;background:white;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 20px;font-weight:600;}
+.page{display:none;}.page.active{display:block;}
+.step{flex:1;text-align:center;padding:10px;border-radius:8px;font-size:14px;background:#e5e7eb;color:#6b7280;cursor:pointer;}
+.step.active{background:#2563eb;color:white;}
+.video-card{background:white;border:1px solid #e5e7eb;border-radius:10px;padding:14px;position:relative;}
+.shared-remark-card{background:#f3f4f6;border:1px solid #d1d5db;border-radius:10px;padding:10px;margin-bottom:6px;position:relative;}
+.preview-container{position:relative;height:100%;}
+.preview{background:#0f172a;color:#e2e8f0;font-family:monospace;border-radius:10px;padding:20px;height:100%;overflow:auto;white-space:pre-wrap;}
+.copy-btn{position:absolute;top:12px;right:12px;background:#1f2937;color:white;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;}
+.copy-btn:hover{background:#374151;}
+.divider{width:6px;cursor:col-resize;background:#e5e7eb;}
+textarea{min-height:90px;}
+.remove-btn{position:absolute;top:6px;right:6px;background:#ef4444;color:white;padding:2px 6px;border-radius:6px;font-size:10px;cursor:pointer;}
+.remove-btn:hover{background:#b91c1c;}
 </style>
 </head>
 <body>
+<div class="app">
+<div class="sidebar">
+<div class="p-6 font-bold text-lg border-b">Appeal Tool</div>
+<div class="p-4"><button onclick="newAppeal()" class="w-full bg-blue-600 text-white py-2 rounded-lg">New Appeal</button></div>
+</div>
 
-<div class="iphone-frame">
-    <div class="screen">
-        <div class="notch"></div>
-        <div class="top-bar">Status Logger</div>
-        <div id="pasteArea">Paste image(s) here using Ctrl+V</div>
-        <div id="output"></div>
-        <div class="controls">
-            <select id="status">
-                <option value="Time in">Time in</option>
-                <option value="Short Break">Short Break</option>
-                <option value="Meal Break">Meal Break</option>
-                <option value="Wellness">Wellness</option>
-                <option value="None">None</option>
-            </select>
-            <select id="fontSelect">
-                <option value="Arial">Arial</option>
-                <option value="Verdana">Verdana</option>
-                <option value="Tahoma">Tahoma</option>
-                <option value="Courier New">Courier New</option>
-            </select>
-            <input type="number" id="fontSize" placeholder="Size" value="20" min="10" max="100">
-            <select id="position">
-                <option value="top-left">Top Left</option>
-                <option value="top-center">Top Center</option>
-                <option value="top-right">Top Right</option>
-                <option value="bottom-left">Bottom Left</option>
-                <option value="bottom-center" selected>Bottom Center</option>
-                <option value="bottom-right">Bottom Right</option>
-                <option value="center">Center</option>
-            </select>
-            <button id="generateImage">Generate</button>
-            <button id="refreshButton">Refresh</button>
-        </div>
-        <div class="home-indicator"></div>
+<div class="flex-1 flex flex-col">
+<div class="topbar">Appeal Generator</div>
+<div class="flex flex-1">
+<div class="flex-1 p-8 overflow-auto">
+
+<div class="flex gap-3 mb-6">
+<div onclick="showPage(1)" id="step1Indicator" class="step active">Tags</div>
+<div onclick="showPage(2)" id="step2Indicator" class="step">Videos</div>
+<div onclick="showPage(3)" id="step3Indicator" class="step">Reason</div>
+</div>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+<label class="font-semibold">Tagged as (BDQA)</label>
+<input id="bdqaTag" list="tags" class="border p-2 rounded w-full mt-1">
+<datalist id="tags">
+<option value="Normal"><option value="Copyrights Copy (S1)"><option value="Non-copyrights Copy (S1)"><option value="Non-copyrights multi-edits (S2)"><option value="Non-copyrights multi-theme (S5)"><option value="Suspected Name (S5)"><option value="Copyrights Multi-Edits (S3)"><option value="Copyrights High Cost Simple Paraphrase (S5)"><option value="Pseudo-compilation (S0)"><option value="Fast Dubbing Speed (S5)"><option value="AI Feeling (S5)"><option value="Split-screen-video (S0)"><option value="Low Quality Reaction (S1)"><option value="Repost (S1)"><option value="Slides video (S1)"><option value="Irrelevant Audio/Subtitles (S0)"><option value="Aimless Random Shooting (S1)"><option value="Q&A (S1)"><option value="Unrelated Clips (S1)"><option value="Repeated Video (S1)"><option value="Inferior Narration (S1)"><option value="Game Filter (S0)"><option value="Motivation Quotes (S1)"><option value="Hard Cut to Black (mid-video) (S1)"><option value="Irrelevant Descriptions (S1)"><option value="Meaningless Element (S1)"><option value="Meaningless Filter & Effect (S5)"><option value="Malicious Blurry (S5)"><option value="Malicious Shaking (S5)"><option value="Blank Screen (S5)"><option value="Inclined Image (S5)"><option value="Shoot Directly At Face (S5)"><option value="Screen Recording/Screen Shooting (S5)"><option value="Advertising redirection (S1)"><option value="Fake hacking service (S1)"><option value="Fraud (S1)"><option value="Icon Inducement (S3)"><option value="Simulated Sexual Acts (S0)"><option value="Exposure of Intimate Body Parts (S0)"><option value="Mild Pornography (S2)"><option value="Moderate Pornography (S1)"><option value="Severe Pornography (S1)"><option value="High-horrify (S2)"><option value="Disgusting (S1)">
+</datalist>
+
+<label class="font-semibold mt-4 block">Initially classified as</label>
+<select id="initialTag" class="border p-2 rounded w-full mt-1">
+<option value="">Select</option><option>Normal</option><option>Copyrights Copy (S1)</option><option>Non-copyrights Copy (S1)</option><option>Non-copyrights multi-edits (S2)</option><option>Non-copyrights multi-theme (S5)</option><option>Suspected Name (S5)</option><option>Copyrights Multi-Edits (S3)</option><option>Copyrights High Cost Simple Paraphrase (S5)</option><option>Pseudo-compilation (S0)</option><option>Fast Dubbing Speed (S5)</option><option>AI Feeling (S5)</option><option>Split-screen-video (S0)</option><option>Low Quality Reaction (S1)</option><option>Repost (S1)</option><option>Slides video (S1)</option><option>Irrelevant Audio/Subtitles (S0)</option><option>Aimless Random Shooting (S1)</option><option>Q&A (S1)</option><option>Unrelated Clips (S1)</option><option>Repeated Video (S1)</option><option>Inferior Narration (S1)</option><option>Game Filter (S0)</option><option>Motivation Quotes (S1)</option><option>Hard Cut to Black (mid-video) (S1)</option><option>Irrelevant Descriptions (S1)</option><option>Meaningless Element (S1)</option><option>Meaningless Filter & Effect (S5)</option><option>Malicious Blurry (S5)</option><option>Malicious Shaking (S5)</option><option>Blank Screen (S5)</option><option>Inclined Image (S5)</option><option>Shoot Directly At Face (S5)</option><option>Screen Recording/Screen Shooting (S5)</option><option>Advertising redirection (S1)</option><option>Fake hacking service (S1)</option><option>Fraud (S1)</option><option>Icon Inducement (S3)</option><option>Simulated Sexual Acts (S0)</option><option>Exposure of Intimate Body Parts (S0)</option><option>Mild Pornography (S2)</option><option>Moderate Pornography (S1)</option><option>Severe Pornography (S1)</option><option>High-horrify (S2)</option><option>Disgusting (S1)</select>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+  <h2 class="font-semibold text-lg mb-3">Videos</h2>
+
+  <!-- Shared Remarks Section -->
+  <div class="mb-6">
+    <div class="flex justify-between items-center mb-2">
+      <h3 class="font-semibold">Shared Remarks</h3>
+      <button onclick="addSharedRemark()" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">+ Add Shared Remark</button>
     </div>
+    <p class="text-sm text-gray-600 mb-2">
+      Write a remark that applies to multiple videos. Leave video numbers blank to apply to all.
+    </p>
+    <div id="sharedRemarksContainer" class="space-y-2"></div>
+  </div>
+
+  <!-- Video List Section -->
+  <div class="mb-4 flex justify-between items-center">
+    <h3 class="font-semibold">Individual Videos</h3>
+    <button onclick="addVideo()" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">+ Add Video</button>
+  </div>
+  <p class="text-sm text-gray-600 mb-2">
+    Add videos one by one. Fill in the number, Muse info, copyright, narration, and any details.
+  </p>
+  <div id="videoContainer" class="space-y-4"></div>
+</div>
+
+<!-- PAGE 3 -->
+<div id="page3" class="page">
+<h2 class="font-semibold mb-2">Appeal Reason</h2>
+<textarea id="reasonInput" class="border p-2 rounded w-full" placeholder="Explain your appeal"></textarea>
+<label class="flex items-center gap-2 mt-3">
+<input type="checkbox" id="includePoliteNote"> Add polite note
+</label>
+</div>
+
+</div>
+<div id="dragbar" class="divider"></div>
+
+<div id="previewPanel" class="w-[520px] border-l p-6 bg-white">
+<h2 class="font-semibold mb-3">Live Preview</h2>
+<div class="preview-container">
+<div onclick="copyPreview()" class="copy-btn">Copy</div>
+<div id="finalOutput" class="preview">Appeal preview will appear here.</div>
+</div>
+</div>
+</div>
 </div>
 
 <script>
-// --- JS logic ---
-const pasteArea = document.getElementById('pasteArea');
-const generateButton = document.getElementById('generateImage');
-const refreshButton = document.getElementById('refreshButton');
-const outputDiv = document.getElementById('output');
+var appealIntro="", videoCount=0, sharedRemarkCount=0;
 
-const statusSelect = document.getElementById('status');
-const fontSelect = document.getElementById('fontSelect');
-const fontSizeInput = document.getElementById('fontSize');
-const positionSelect = document.getElementById('position');
+function newAppeal(){
+  appealIntro=""; videoCount=0; sharedRemarkCount=0;
+  document.getElementById("bdqaTag").value="";
+  document.getElementById("initialTag").value="";
+  document.getElementById("reasonInput").value="";
+  document.getElementById("includePoliteNote").checked=false;
+  document.getElementById("videoContainer").innerHTML="";
+  document.getElementById("sharedRemarksContainer").innerHTML="";
+  showPage(1); updatePreview();
+}
 
-let images = [];
+function showPage(n){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page"+n).classList.add("active");
+  updateStepper(n); updatePreview();
+}
 
-// Drag & Paste
-pasteArea.addEventListener('dragenter', () => pasteArea.classList.add('hover'));
-pasteArea.addEventListener('dragleave', () => pasteArea.classList.remove('hover'));
-pasteArea.addEventListener('dragover', e => e.preventDefault());
-pasteArea.addEventListener('drop', e => e.preventDefault());
+function updateStepper(n){
+  for(var i=1;i<=3;i++){document.getElementById("step"+i+"Indicator").classList.remove("active");}
+  document.getElementById("step"+n+"Indicator").classList.add("active");
+}
 
-// Paste Images
-pasteArea.addEventListener('paste', event => {
-    const items = event.clipboardData.items;
-    for(let i=0;i<items.length;i++){
-        if(items[i].type.indexOf('image')!==-1){
-            const file = items[i].getAsFile();
-            const reader = new FileReader();
-            reader.onload = e=>{
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.style.width='80px'; // thumbnail
-                img.style.height='auto';
-                pasteArea.innerHTML=''; // clear placeholder
-                images.push(img);
+function addVideo(){
+  if(videoCount>=10){ alert("Max 10 videos"); return;}
+  videoCount++;
+  var card=document.createElement("div");
+  card.className="video-card p-4 bg-white shadow-sm rounded-lg relative";
+  card.innerHTML = `
+    <button class="remove-btn" onclick="removeVideo(this)">✕</button>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
+      <div>
+        <label class="font-semibold text-sm">Video #</label>
+        <input type="number" placeholder="e.g., 1" class="border p-2 rounded w-full video-number">
+      </div>
+      <div>
+        <label class="font-semibold text-sm">Muse Info</label>
+        <select class="border p-2 rounded muse-info w-full" onchange="toggleMuse(this)">
+          <option value="">Select</option>
+          <option>Yes</option>
+          <option>No</option>
+          <option>Not Available</option>
+        </select>
+      </div>
+      <div class="hidden copyright-section">
+        <label class="font-semibold text-sm">Copyrighted</label>
+        <select class="border p-2 rounded copyright w-full">
+          <option value="">Select</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+      <div class="hidden narration-section">
+        <label class="font-semibold text-sm">Narration %</label>
+        <input type="number" placeholder="0-100" class="border p-2 rounded w-full narration">
+      </div>
+    </div>
+    <div>
+      <label class="font-semibold text-sm">Details / Notes</label>
+      <textarea placeholder="Describe video content, issues, etc." class="border p-2 rounded w-full details mt-1"></textarea>
+    </div>
+  `;
+  document.getElementById("videoContainer").appendChild(card); updatePreview();
+}
 
-                // Show all images
-                images.forEach(im=>{
-                    if(!pasteArea.contains(im)) pasteArea.appendChild(im);
-                });
+function removeVideo(btn){ btn.closest(".video-card").remove(); videoCount--; updatePreview(); }
 
-                // Limit to 2 preview images
-                if(images.length>2){
-                    images.shift();
-                    pasteArea.innerHTML='';
-                    images.forEach(im=>pasteArea.appendChild(im));
-                }
-            };
-            reader.readAsDataURL(file);
-        }
+function toggleMuse(select){
+  var card = select.closest(".video-card");
+  var copyright = card.querySelector(".copyright-section");
+  var narration = card.querySelector(".narration-section");
+  if(select.value==="Yes" || select.value==="No"){ copyright.classList.remove("hidden"); narration.classList.remove("hidden");} else { copyright.classList.add("hidden"); narration.classList.add("hidden"); }
+}
+
+function addSharedRemark(){
+  sharedRemarkCount++;
+  var container = document.getElementById("sharedRemarksContainer");
+  var card = document.createElement("div");
+  card.className = "shared-remark-card p-3 shadow rounded relative";
+  card.id = "sharedRemark"+sharedRemarkCount;
+  card.innerHTML = `
+    <button class="remove-btn" onclick="removeSharedRemark('sharedRemark${sharedRemarkCount}')">✕</button>
+    <label class="font-semibold text-sm">Remark</label>
+    <input type="text" class="border p-2 rounded w-full remarkText mt-1" placeholder="Write remark here">
+    <label class="block mt-2 text-sm text-gray-600">
+      Apply to videos (numbers or ranges, e.g., 1,2,4-6). Leave blank to apply to all.
+    </label>
+    <input type="text" class="border p-2 rounded w-full remarkVideos mt-1" placeholder="Optional">
+  `;
+  container.appendChild(card);
+  updatePreview();
+}
+
+function removeSharedRemark(id){document.getElementById(id).remove(); updatePreview();}
+
+function parseVideoNumbers(str){
+  let nums=[]; if(!str) return nums;
+  str.split(",").forEach(part=>{if(part.includes("-")){let [start,end]=part.split("-").map(Number); for(let i=start;i<=end;i++){nums.push(i)}} else {let n=Number(part); if(!isNaN(n)) nums.push(n)}}); return nums;
+}
+
+function updatePreview(){
+  var bdqa=document.getElementById("bdqaTag").value.trim(); var initial=document.getElementById("initialTag").value.trim();
+  appealIntro = "";
+  if(bdqa && initial){appealIntro="Hi Team,\n\nGreetings!, I would like to submit an appeal for the evaluation of this case.\n\nIt was tagged as "+bdqa+" by BDQA, but I initially classified this case as "+initial+".\n";}
+  var text=appealIntro+"\n";
+
+  // Shared remarks
+  let sharedRemarks=[];
+  document.querySelectorAll(".shared-remark-card").forEach(function(card){
+    let remark=card.querySelector(".remarkText").value.trim();
+    let vids=parseVideoNumbers(card.querySelector(".remarkVideos").value.trim());
+    if(remark){
+      if(vids.length===0){
+        vids=Array.from(document.querySelectorAll(".video-card")).map(v=>Number(v.querySelector(".video-number").value)).filter(n=>n);
+      }
+      if(vids.length>0){ sharedRemarks.push({remark:remark,videos:vids}); }
     }
-});
+  });
+  sharedRemarks.forEach(sr=>{text+="\nVideo "+sr.videos.join(",")+"\nRemark: "+sr.remark+"\n";});
 
-// Generate full-size image
-generateButton.addEventListener('click', () => {
-    if(images.length===0){ alert('Please paste at least one image.'); return; }
-
-    const status = statusSelect.value;
-    const font = fontSelect.value;
-    const fontSize = parseInt(fontSizeInput.value)||20;
-    const position = positionSelect.value;
-    const timestamp = new Date().toLocaleString();
-
-    const width = images.reduce((sum,img)=>sum+img.naturalWidth,0);
-    const height = Math.max(...images.map(img=>img.naturalHeight));
-
-    const canvas = document.createElement('canvas');
-    canvas.width=width;
-    canvas.height=height;
-    const ctx = canvas.getContext('2d');
-
-    // Draw images
-    let x=0;
-    images.forEach(img=>{
-        ctx.drawImage(img,x,0,img.naturalWidth,img.naturalHeight);
-        const grad=ctx.createLinearGradient(x,0,x+img.naturalWidth,img.naturalHeight);
-        grad.addColorStop(0,'rgba(255,255,255,0.15)');
-        grad.addColorStop(0.5,'rgba(255,255,255,0)');
-        ctx.fillStyle=grad;
-        ctx.fillRect(x,0,img.naturalWidth,img.naturalHeight);
-        x+=img.naturalWidth;
-    });
-
-    const text = status==='None'? timestamp:`${status} | ${timestamp}`;
-    ctx.font=`${fontSize}px ${font}`;
-    ctx.textBaseline='top';
-    const textWidth=ctx.measureText(text).width;
-    const padding=10;
-    let rectX, rectY;
-
-    switch(position){
-        case 'top-left': rectX=padding; rectY=padding; break;
-        case 'top-center': rectX=(width-textWidth)/2; rectY=padding; break;
-        case 'top-right': rectX=width-textWidth-padding; rectY=padding; break;
-        case 'bottom-left': rectX=padding; rectY=height-fontSize-padding; break;
-        case 'bottom-center': rectX=(width-textWidth)/2; rectY=height-fontSize-padding; break;
-        case 'bottom-right': rectX=width-textWidth-padding; rectY=height-fontSize-padding; break;
-        case 'center': rectX=(width-textWidth)/2; rectY=(height-fontSize)/2; break;
+  // Individual video details
+  document.querySelectorAll(".video-card").forEach(function(v){
+    var number=Number(v.querySelector(".video-number").value);
+    var details=v.querySelector(".details").value;
+    var muse=v.querySelector(".muse-info").value;
+    var copyright=v.querySelector(".copyright").value;
+    var narration=v.querySelector(".narration").value;
+    if(number){
+      text+="\nVideo "+number+":\n";
+      if(muse){text+="Muse Info: "+muse+"\n"; if(muse==="Yes"||muse==="No"){text+="Copyrighted: "+copyright+"\n"; text+="Narration: "+narration+"%\n";}}
+      if(details){text+="Details: "+details+"\n";}
     }
+  });
 
-    ctx.fillStyle='rgba(0,0,0,0.6)';
-    ctx.fillRect(rectX-5,rectY-5,textWidth+10,fontSize+10);
+  var reason=document.getElementById("reasonInput").value; if(reason){text+="\nReason:\n"+reason+"\n";}
+  if(document.getElementById("includePoliteNote").checked){text+="\nI kindly request your consideration and understanding regarding this case. Thank you!";}
+  document.getElementById("finalOutput").textContent=text;
+}
 
-    ctx.fillStyle='#fff';
-    ctx.shadowColor='rgba(255,255,255,0.5)';
-    ctx.shadowBlur=6;
-    ctx.fillText(text,rectX,rectY);
+document.addEventListener("input",updatePreview);
 
-    outputDiv.innerHTML='';
-    const finalImg=new Image();
-    finalImg.src=canvas.toDataURL('image/png');
-    outputDiv.appendChild(finalImg);
+function copyPreview(){navigator.clipboard.writeText(document.getElementById("finalOutput").textContent); alert("Copied!");}
 
-    // Auto-copy
-    canvas.toBlob(async blob=>{
-        if(!blob) return;
-        try{
-            await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-        }catch(err){ console.error('Copy failed',err); }
-    },'image/png');
-
-    images=[];
-    pasteArea.innerHTML='Paste image(s) here using Ctrl+V';
-});
-
-// Refresh
-refreshButton.addEventListener('click',()=>{
-    images=[];
-    pasteArea.innerHTML='Paste image(s) here using Ctrl+V';
-    outputDiv.innerHTML='';
-    statusSelect.selectedIndex=0;
-    positionSelect.value='bottom-center';
-});
+const dragbar=document.getElementById("dragbar"); const preview=document.getElementById("previewPanel");
+dragbar.addEventListener("mousedown",function(){document.addEventListener("mousemove",resize); document.addEventListener("mouseup",function(){document.removeEventListener("mousemove",resize)},{once:true});});
+function resize(e){let newWidth = window.innerWidth - e.clientX; preview.style.width=newWidth+"px";}
 </script>
-
 </body>
 </html>
