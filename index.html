@@ -270,18 +270,18 @@ const dragbar=document.getElementById("dragbar"), preview=document.getElementByI
 dragbar.addEventListener("mousedown",()=>{document.addEventListener("mousemove",resize); document.addEventListener("mouseup",()=>{document.removeEventListener("mousemove",resize);},{once:true});});
 function resize(e){preview.style.width=window.innerWidth-e.clientX+"px";}
 
-// --- Rephrase Button ---
+// --- Rephrase Button now just copies the appeal reason ---
 document.getElementById("rephraseBtn").addEventListener("click", () => {
   const text = document.getElementById("finalOutput").textContent.trim();
   if(!text){ alert("Your appeal text is empty."); return; }
 
-  const baseUrl = "https://www.google.com/ai"; 
-  const params = new URLSearchParams({
-    prompt: "Rephrase my message for me: " + text
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Appeal reason copied to clipboard! ✅");
+  }).catch(() => {
+    alert("Failed to copy. Please copy manually.");
   });
-
-  window.open(baseUrl + "?" + params.toString(), "_blank");
 });
+  
 </script>
 </body>
 </html>
