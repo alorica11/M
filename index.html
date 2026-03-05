@@ -4,103 +4,140 @@
 <meta charset="UTF-8">
 <title>Appeal Generator</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-body{background:#f6f8fc;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;margin:0;}
-.app{height:100vh;display:flex;}
-.sidebar{width:220px;background:white;border-right:1px solid #e5e7eb;}
-.topbar{height:64px;background:white;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 20px;font-weight:600;}
+body{font-family:'Roboto',sans-serif;background:#f1f3f4;margin:0;}
+.app{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:220px;background:white;border-right:1px solid #e0e0e0;display:flex;flex-direction:column;}
+.topbar{height:64px;background:white;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;padding:0 24px;font-weight:500;font-size:18px;}
 .page{display:none;}.page.active{display:block;}
-.step{flex:1;text-align:center;padding:10px;border-radius:8px;font-size:14px;background:#e5e7eb;color:#6b7280;cursor:pointer;}
-.step.active{background:#2563eb;color:white;}
-.video-card{background:white;border:1px solid #e5e7eb;border-radius:10px;padding:14px;position:relative;}
-.shared-remark-card{background:#f3f4f6;border:1px solid #d1d5db;border-radius:10px;padding:10px;margin-bottom:6px;position:relative;}
+.step{flex:1;text-align:center;padding:10px 0;border-radius:50px;font-size:14px;background:#e0e0e0;color:#616161;cursor:pointer;transition:0.3s;}
+.step.active{background:#1a73e8;color:white;}
+.video-card,.shared-remark-card{background:white;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);padding:16px;position:relative;}
+.shared-remark-card{border-left:4px solid #1a73e8;}
 .preview-container{position:relative;height:100%;}
-.preview{background:#0f172a;color:#e2e8f0;font-family:monospace;border-radius:10px;padding:20px;height:100%;overflow:auto;white-space:pre-wrap;}
-.copy-btn{position:absolute;top:12px;right:12px;background:#1f2937;color:white;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;}
-.copy-btn:hover{background:#374151;}
-.divider{width:6px;cursor:col-resize;background:#e5e7eb;}
-textarea{min-height:90px;}
-.remove-btn{position:absolute;top:6px;right:6px;background:#ef4444;color:white;padding:2px 6px;border-radius:6px;font-size:10px;cursor:pointer;}
-.remove-btn:hover{background:#b91c1c;}
+.preview{background:#202124;color:#e8eaed;font-family:monospace;border-radius:8px;padding:16px;height:100%;overflow:auto;white-space:pre-wrap;}
+.copy-btn{position:absolute;top:12px;right:12px;background:#1a73e8;color:white;padding:6px 12px;border-radius:24px;font-size:12px;cursor:pointer;transition:0.3s;}
+.copy-btn:hover{background:#1669c1;}
+.copy-status{position:absolute;top:12px;right:95px;color:#34a853;font-weight:600;transition:0.3s;}
+.remove-btn{position:absolute;top:8px;right:8px;background:#ea4335;color:white;padding:2px 6px;border-radius:6px;font-size:10px;cursor:pointer;transition:0.3s;}
+.remove-btn:hover{background:#c5221f;}
+textarea,input,select{outline:none;}
+textarea:focus,input:focus,select:focus{border-color:#1a73e8;box-shadow:0 0 0 1px #1a73e8;}
+.divider{width:6px;cursor:col-resize;background:#e0e0e0;}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="sidebar">
-<div class="p-6 font-bold text-lg border-b">Appeal Tool</div>
-<div class="p-4"><button onclick="newAppeal()" class="w-full bg-blue-600 text-white py-2 rounded-lg">New Appeal</button></div>
+
+<!-- Sidebar -->
+<div class="sidebar p-6">
+  <div class="font-bold text-lg mb-6">Appeal Tool</div>
+  <button onclick="newAppeal()" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">New Appeal</button>
 </div>
 
+<!-- Main -->
 <div class="flex-1 flex flex-col">
 <div class="topbar">Appeal Generator</div>
 <div class="flex flex-1">
 <div class="flex-1 p-8 overflow-auto">
 
+<!-- Step Navigation -->
 <div class="flex gap-3 mb-6">
-<div onclick="showPage(1)" id="step1Indicator" class="step active">Tags</div>
-<div onclick="showPage(2)" id="step2Indicator" class="step">Videos</div>
-<div onclick="showPage(3)" id="step3Indicator" class="step">Reason</div>
+  <div onclick="showPage(1)" id="step1Indicator" class="step active">Tags</div>
+  <div onclick="showPage(2)" id="step2Indicator" class="step">Videos</div>
+  <div onclick="showPage(3)" id="step3Indicator" class="step">Reason</div>
 </div>
 
-<!-- PAGE 1 -->
-<div id="page1" class="page active">
+<!-- PAGE 1: Tags -->
+<div id="page1" class="page active space-y-4">
 <label class="font-semibold">Tagged as (BDQA)</label>
-<input id="bdqaTag" list="tags" class="border p-2 rounded w-full mt-1">
+<input id="bdqaTag" list="tags" class="border p-2 rounded w-full" placeholder="Select or type tag">
 <datalist id="tags">
-<option value="Normal"><option value="Copyrights Copy (S1)"><option value="Non-copyrights Copy (S1)"><option value="Non-copyrights multi-edits (S2)"><option value="Non-copyrights multi-theme (S5)"><option value="Suspected Name (S5)"><option value="Copyrights Multi-Edits (S3)"><option value="Copyrights High Cost Simple Paraphrase (S5)"><option value="Pseudo-compilation (S0)"><option value="Fast Dubbing Speed (S5)"><option value="AI Feeling (S5)"><option value="Split-screen-video (S0)"><option value="Low Quality Reaction (S1)"><option value="Repost (S1)"><option value="Slides video (S1)"><option value="Irrelevant Audio/Subtitles (S0)"><option value="Aimless Random Shooting (S1)"><option value="Q&A (S1)"><option value="Unrelated Clips (S1)"><option value="Repeated Video (S1)"><option value="Inferior Narration (S1)"><option value="Game Filter (S0)"><option value="Motivation Quotes (S1)"><option value="Hard Cut to Black (mid-video) (S1)"><option value="Irrelevant Descriptions (S1)"><option value="Meaningless Element (S1)"><option value="Meaningless Filter & Effect (S5)"><option value="Malicious Blurry (S5)"><option value="Malicious Shaking (S5)"><option value="Blank Screen (S5)"><option value="Inclined Image (S5)"><option value="Shoot Directly At Face (S5)"><option value="Screen Recording/Screen Shooting (S5)"><option value="Advertising redirection (S1)"><option value="Fake hacking service (S1)"><option value="Fraud (S1)"><option value="Icon Inducement (S3)"><option value="Simulated Sexual Acts (S0)"><option value="Exposure of Intimate Body Parts (S0)"><option value="Mild Pornography (S2)"><option value="Moderate Pornography (S1)"><option value="Severe Pornography (S1)"><option value="High-horrify (S2)"><option value="Disgusting (S1)">
+<option value="Normal"><option value="Copyrights Copy (S1)"><option value="Non-copyrights Copy (S1)">
+<option value="Non-copyrights multi-edits (S2)"><option value="Non-copyrights multi-theme (S5)"><option value="Suspected Name (S5)">
+<option value="Copyrights Multi-Edits (S3)"><option value="Copyrights High Cost Simple Paraphrase (S5)"><option value="Pseudo-compilation (S0)">
+<option value="Fast Dubbing Speed (S5)"><option value="AI Feeling (S5)"><option value="Split-screen-video (S0)">
+<option value="Low Quality Reaction (S1)"><option value="Repost (S1)"><option value="Slides video (S1)">
+<option value="Irrelevant Audio/Subtitles (S0)"><option value="Aimless Random Shooting (S1)"><option value="Q&A (S1)">
+<option value="Unrelated Clips (S1)"><option value="Repeated Video (S1)"><option value="Inferior Narration (S1)">
+<option value="Game Filter (S0)"><option value="Motivation Quotes (S1)"><option value="Hard Cut to Black (mid-video) (S1)">
+<option value="Irrelevant Descriptions (S1)"><option value="Meaningless Element (S1)"><option value="Meaningless Filter & Effect (S5)">
+<option value="Malicious Blurry (S5)"><option value="Malicious Shaking (S5)"><option value="Blank Screen (S5)">
+<option value="Inclined Image (S5)"><option value="Shoot Directly At Face (S5)"><option value="Screen Recording/Screen Shooting (S5)">
+<option value="Advertising redirection (S1)"><option value="Fake hacking service (S1)"><option value="Fraud (S1)">
+<option value="Icon Inducement (S3)"><option value="Simulated Sexual Acts (S0)"><option value="Exposure of Intimate Body Parts (S0)">
+<option value="Mild Pornography (S2)"><option value="Moderate Pornography (S1)"><option value="Severe Pornography (S1)">
+<option value="High-horrify (S2)"><option value="Disgusting (S1)">
 </datalist>
-
-<label class="font-semibold mt-4 block">Initially classified as</label>
-<select id="initialTag" class="border p-2 rounded w-full mt-1">
-<option value="">Select</option><option>Normal</option><option>Copyrights Copy (S1)</option><option>Non-copyrights Copy (S1)</option><option>Non-copyrights multi-edits (S2)</option><option>Non-copyrights multi-theme (S5)</option><option>Suspected Name (S5)</option><option>Copyrights Multi-Edits (S3)</option><option>Copyrights High Cost Simple Paraphrase (S5)</option><option>Pseudo-compilation (S0)</option><option>Fast Dubbing Speed (S5)</option><option>AI Feeling (S5)</option><option>Split-screen-video (S0)</option><option>Low Quality Reaction (S1)</option><option>Repost (S1)</option><option>Slides video (S1)</option><option>Irrelevant Audio/Subtitles (S0)</option><option>Aimless Random Shooting (S1)</option><option>Q&A (S1)</option><option>Unrelated Clips (S1)</option><option>Repeated Video (S1)</option><option>Inferior Narration (S1)</option><option>Game Filter (S0)</option><option>Motivation Quotes (S1)</option><option>Hard Cut to Black (mid-video) (S1)</option><option>Irrelevant Descriptions (S1)</option><option>Meaningless Element (S1)</option><option>Meaningless Filter & Effect (S5)</option><option>Malicious Blurry (S5)</option><option>Malicious Shaking (S5)</option><option>Blank Screen (S5)</option><option>Inclined Image (S5)</option><option>Shoot Directly At Face (S5)</option><option>Screen Recording/Screen Shooting (S5)</option><option>Advertising redirection (S1)</option><option>Fake hacking service (S1)</option><option>Fraud (S1)</option><option>Icon Inducement (S3)</option><option>Simulated Sexual Acts (S0)</option><option>Exposure of Intimate Body Parts (S0)</option><option>Mild Pornography (S2)</option><option>Moderate Pornography (S1)</option><option>Severe Pornography (S1)</option><option>High-horrify (S2)</option><option>Disgusting (S1)</select>
+<label class="font-semibold">Initially classified as</label>
+<select id="initialTag" class="border p-2 rounded w-full">
+<option value="">Select</option>
+<option>Normal</option><option>Copyrights Copy (S1)</option><option>Non-copyrights Copy (S1)</option>
+<option>Non-copyrights multi-edits (S2)</option><option>Non-copyrights multi-theme (S5)</option><option>Suspected Name (S5)</option>
+<option>Copyrights Multi-Edits (S3)</option><option>Copyrights High Cost Simple Paraphrase (S5)</option><option>Pseudo-compilation (S0)</option>
+<option>Fast Dubbing Speed (S5)</option><option>AI Feeling (S5)</option><option>Split-screen-video (S0)</option>
+<option>Low Quality Reaction (S1)</option><option>Repost (S1)</option><option>Slides video (S1)</option>
+<option>Irrelevant Audio/Subtitles (S0)</option><option>Aimless Random Shooting (S1)</option><option>Q&A (S1)</option>
+<option>Unrelated Clips (S1)</option><option>Repeated Video (S1)</option><option>Inferior Narration (S1)</option>
+<option>Game Filter (S0)</option><option>Motivation Quotes (S1)</option><option>Hard Cut to Black (mid-video) (S1)</option>
+<option>Irrelevant Descriptions (S1)</option><option>Meaningless Element (S1)</option><option>Meaningless Filter & Effect (S5)</option>
+<option>Malicious Blurry (S5)</option><option>Malicious Shaking (S5)</option><option>Blank Screen (S5)</option>
+<option>Inclined Image (S5)</option><option>Shoot Directly At Face (S5)</option><option>Screen Recording/Screen Shooting (S5)</option>
+<option>Advertising redirection (S1)</option><option>Fake hacking service (S1)</option><option>Fraud (S1)</option>
+<option>Icon Inducement (S3)</option><option>Simulated Sexual Acts (S0)</option><option>Exposure of Intimate Body Parts (S0)</option>
+<option>Mild Pornography (S2)</option><option>Moderate Pornography (S1)</option><option>Severe Pornography (S1)</option>
+<option>High-horrify (S2)</option><option>Disgusting (S1)</option>
+</select>
 </div>
 
-<!-- PAGE 2 -->
-<div id="page2" class="page">
-  <h2 class="font-semibold text-lg mb-3">Videos</h2>
-
-  <!-- Shared Remarks Section -->
-  <div class="mb-6">
-    <div class="flex justify-between items-center mb-2">
-      <h3 class="font-semibold">Shared Remarks</h3>
-      <button onclick="addSharedRemark()" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">+ Add Shared Remark</button>
-    </div>
-    <p class="text-sm text-gray-600 mb-2">
-      Write a remark that applies to multiple videos. Leave video numbers blank to apply to all.
-    </p>
-    <div id="sharedRemarksContainer" class="space-y-2"></div>
-  </div>
-
-  <!-- Video List Section -->
-  <div class="mb-4 flex justify-between items-center">
-    <h3 class="font-semibold">Individual Videos</h3>
-    <button onclick="addVideo()" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">+ Add Video</button>
-  </div>
-  <p class="text-sm text-gray-600 mb-2">
-    Add videos one by one. Fill in the number, Muse info, copyright, narration, and any details.
-  </p>
-  <div id="videoContainer" class="space-y-4"></div>
+<!-- PAGE 2: Videos -->
+<div id="page2" class="page space-y-6">
+<!-- Shared Remarks -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<h3 class="font-semibold text-lg">Shared Remarks</h3>
+<button onclick="addSharedRemark()" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">+ Add</button>
+</div>
+<p class="text-sm text-gray-600 mb-2">Write a remark for multiple videos. Leave video numbers blank to apply to all.</p>
+<div id="sharedRemarksContainer" class="space-y-2"></div>
 </div>
 
-<!-- PAGE 3 -->
-<div id="page3" class="page">
-<h2 class="font-semibold mb-2">Appeal Reason</h2>
+<!-- Individual Videos -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<h3 class="font-semibold text-lg">Individual Videos</h3>
+<button onclick="addVideo()" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">+ Add Video</button>
+</div>
+<p class="text-sm text-gray-600 mb-2">Fill in video number, Muse info, copyright, narration, and details.</p>
+<div id="videoContainer" class="space-y-4"></div>
+</div>
+</div>
+
+<!-- PAGE 3: Reason -->
+<div id="page3" class="page space-y-4">
+<h3 class="font-semibold text-lg">Appeal Reason</h3>
 <textarea id="reasonInput" class="border p-2 rounded w-full" placeholder="Explain your appeal"></textarea>
-<label class="flex items-center gap-2 mt-3">
+<label class="flex items-center gap-2">
 <input type="checkbox" id="includePoliteNote"> Add polite note
 </label>
 </div>
 
 </div>
+
+<!-- Divider -->
 <div id="dragbar" class="divider"></div>
 
-<div id="previewPanel" class="w-[520px] border-l p-6 bg-white">
-<h2 class="font-semibold mb-3">Live Preview</h2>
+<!-- Preview -->
+<div id="previewPanel" class="w-[520px] border-l p-6 bg-white relative">
+<h3 class="font-semibold mb-3">Live Preview</h3>
 <div class="preview-container">
-<div onclick="copyPreview()" class="copy-btn">Copy</div>
+<button id="copyBtn" class="copy-btn">Copy</button>
+<span id="copyStatus" class="copy-status hidden">Copied ✅</span>
 <div id="finalOutput" class="preview">Appeal preview will appear here.</div>
 </div>
 </div>
+
 </div>
 </div>
 
@@ -129,44 +166,40 @@ function updateStepper(n){
   document.getElementById("step"+n+"Indicator").classList.add("active");
 }
 
+// --- Shared Remarks ---
+function addSharedRemark(){
+  sharedRemarkCount++;
+  var container = document.getElementById("sharedRemarksContainer");
+  var card = document.createElement("div");
+  card.className = "shared-remark-card p-3";
+  card.id = "sharedRemark"+sharedRemarkCount;
+  card.innerHTML = `
+    <button class="remove-btn" onclick="removeSharedRemark('sharedRemark${sharedRemarkCount}')">✕</button>
+    <label class="font-medium">Remark</label>
+    <input type="text" class="border p-2 rounded w-full remarkText mt-1" placeholder="Write remark here">
+    <label class="text-sm text-gray-600 mt-2">Apply to videos (numbers or ranges, e.g., 1,2,4-6). Leave blank to apply to all.</label>
+    <input type="text" class="border p-2 rounded w-full remarkVideos mt-1" placeholder="Optional">
+  `;
+  container.appendChild(card); updatePreview();
+}
+
+function removeSharedRemark(id){document.getElementById(id).remove(); updatePreview();}
+
+// --- Individual Videos ---
 function addVideo(){
-  if(videoCount>=10){ alert("Max 10 videos"); return;}
+  if(videoCount>=10){alert("Max 10 videos");return;}
   videoCount++;
   var card=document.createElement("div");
-  card.className="video-card p-4 bg-white shadow-sm rounded-lg relative";
-  card.innerHTML = `
+  card.className="video-card";
+  card.innerHTML=`
     <button class="remove-btn" onclick="removeVideo(this)">✕</button>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
-      <div>
-        <label class="font-semibold text-sm">Video #</label>
-        <input type="number" placeholder="e.g., 1" class="border p-2 rounded w-full video-number">
-      </div>
-      <div>
-        <label class="font-semibold text-sm">Muse Info</label>
-        <select class="border p-2 rounded muse-info w-full" onchange="toggleMuse(this)">
-          <option value="">Select</option>
-          <option>Yes</option>
-          <option>No</option>
-          <option>Not Available</option>
-        </select>
-      </div>
-      <div class="hidden copyright-section">
-        <label class="font-semibold text-sm">Copyrighted</label>
-        <select class="border p-2 rounded copyright w-full">
-          <option value="">Select</option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-      </div>
-      <div class="hidden narration-section">
-        <label class="font-semibold text-sm">Narration %</label>
-        <input type="number" placeholder="0-100" class="border p-2 rounded w-full narration">
-      </div>
+      <div><label class="font-medium text-sm">Video #</label><input type="number" class="border p-2 rounded w-full video-number" placeholder="1"></div>
+      <div><label class="font-medium text-sm">Muse Info</label><select class="border p-2 rounded muse-info w-full" onchange="toggleMuse(this)"><option value="">Select</option><option>Yes</option><option>No</option><option>Not Available</option></select></div>
+      <div class="hidden copyright-section"><label class="font-medium text-sm">Copyrighted</label><select class="border p-2 rounded w-full copyright"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+      <div class="hidden narration-section"><label class="font-medium text-sm">Narration %</label><input type="number" class="border p-2 rounded w-full narration"></div>
     </div>
-    <div>
-      <label class="font-semibold text-sm">Details / Notes</label>
-      <textarea placeholder="Describe video content, issues, etc." class="border p-2 rounded w-full details mt-1"></textarea>
-    </div>
+    <div><label class="font-medium text-sm">Details / Notes</label><textarea class="border p-2 rounded w-full details mt-1" placeholder="Describe video content"></textarea></div>
   `;
   document.getElementById("videoContainer").appendChild(card); updatePreview();
 }
@@ -175,83 +208,63 @@ function removeVideo(btn){ btn.closest(".video-card").remove(); videoCount--; up
 
 function toggleMuse(select){
   var card = select.closest(".video-card");
-  var copyright = card.querySelector(".copyright-section");
-  var narration = card.querySelector(".narration-section");
-  if(select.value==="Yes" || select.value==="No"){ copyright.classList.remove("hidden"); narration.classList.remove("hidden");} else { copyright.classList.add("hidden"); narration.classList.add("hidden"); }
+  card.querySelector(".copyright-section").classList.toggle("hidden", !(select.value==="Yes"||select.value==="No"));
+  card.querySelector(".narration-section").classList.toggle("hidden", !(select.value==="Yes"||select.value==="No"));
 }
 
-function addSharedRemark(){
-  sharedRemarkCount++;
-  var container = document.getElementById("sharedRemarksContainer");
-  var card = document.createElement("div");
-  card.className = "shared-remark-card p-3 shadow rounded relative";
-  card.id = "sharedRemark"+sharedRemarkCount;
-  card.innerHTML = `
-    <button class="remove-btn" onclick="removeSharedRemark('sharedRemark${sharedRemarkCount}')">✕</button>
-    <label class="font-semibold text-sm">Remark</label>
-    <input type="text" class="border p-2 rounded w-full remarkText mt-1" placeholder="Write remark here">
-    <label class="block mt-2 text-sm text-gray-600">
-      Apply to videos (numbers or ranges, e.g., 1,2,4-6). Leave blank to apply to all.
-    </label>
-    <input type="text" class="border p-2 rounded w-full remarkVideos mt-1" placeholder="Optional">
-  `;
-  container.appendChild(card);
-  updatePreview();
-}
-
-function removeSharedRemark(id){document.getElementById(id).remove(); updatePreview();}
-
-function parseVideoNumbers(str){
-  let nums=[]; if(!str) return nums;
-  str.split(",").forEach(part=>{if(part.includes("-")){let [start,end]=part.split("-").map(Number); for(let i=start;i<=end;i++){nums.push(i)}} else {let n=Number(part); if(!isNaN(n)) nums.push(n)}}); return nums;
-}
-
+// --- Preview ---
+function parseVideoNumbers(str){let nums=[]; if(!str) return nums; str.split(",").forEach(p=>{if(p.includes("-")){let [s,e]=p.split("-").map(Number);for(let i=s;i<=e;i++) nums.push(i);} else {let n=Number(p);if(!isNaN(n)) nums.push(n);}}); return nums;}
 function updatePreview(){
-  var bdqa=document.getElementById("bdqaTag").value.trim(); var initial=document.getElementById("initialTag").value.trim();
-  appealIntro = "";
-  if(bdqa && initial){appealIntro="Hi Team,\n\nGreetings!, I would like to submit an appeal for the evaluation of this case.\n\nIt was tagged as "+bdqa+" by BDQA, but I initially classified this case as "+initial+".\n";}
+  var bdqa=document.getElementById("bdqaTag").value.trim();
+  var initial=document.getElementById("initialTag").value.trim();
+  appealIntro = bdqa && initial ? `Hi Team,\n\nGreetings Team, I would like to submit an appeal for the evaluation of this case.\n\nIt was tagged as ${bdqa} by BDQA, but I initially classified this case as ${initial}.\n` : "";
   var text=appealIntro+"\n";
 
   // Shared remarks
   let sharedRemarks=[];
-  document.querySelectorAll(".shared-remark-card").forEach(function(card){
-    let remark=card.querySelector(".remarkText").value.trim();
-    let vids=parseVideoNumbers(card.querySelector(".remarkVideos").value.trim());
-    if(remark){
-      if(vids.length===0){
-        vids=Array.from(document.querySelectorAll(".video-card")).map(v=>Number(v.querySelector(".video-number").value)).filter(n=>n);
-      }
-      if(vids.length>0){ sharedRemarks.push({remark:remark,videos:vids}); }
-    }
+  document.querySelectorAll(".shared-remark-card").forEach(c=>{
+    let r=c.querySelector(".remarkText").value.trim();
+    let vids=parseVideoNumbers(c.querySelector(".remarkVideos").value.trim());
+    if(r){ if(vids.length===0) vids=Array.from(document.querySelectorAll(".video-card")).map(v=>Number(v.querySelector(".video-number").value)).filter(n=>n); if(vids.length>0) sharedRemarks.push({remark:r,videos:vids}); }
   });
   sharedRemarks.forEach(sr=>{text+="\nVideo "+sr.videos.join(",")+"\nRemark: "+sr.remark+"\n";});
 
-  // Individual video details
-  document.querySelectorAll(".video-card").forEach(function(v){
-    var number=Number(v.querySelector(".video-number").value);
-    var details=v.querySelector(".details").value;
-    var muse=v.querySelector(".muse-info").value;
-    var copyright=v.querySelector(".copyright").value;
-    var narration=v.querySelector(".narration").value;
-    if(number){
-      text+="\nVideo "+number+":\n";
-      if(muse){text+="Muse Info: "+muse+"\n"; if(muse==="Yes"||muse==="No"){text+="Copyrighted: "+copyright+"\n"; text+="Narration: "+narration+"%\n";}}
-      if(details){text+="Details: "+details+"\n";}
-    }
+  // Individual videos
+  document.querySelectorAll(".video-card").forEach(v=>{
+    let num=Number(v.querySelector(".video-number").value);
+    if(!num) return;
+    text+="\nVideo "+num+":\n";
+    let muse=v.querySelector(".muse-info").value;
+    let copyright=v.querySelector(".copyright").value;
+    let narration=v.querySelector(".narration").value;
+    let details=v.querySelector(".details").value;
+    if(muse){text+="Muse Info: "+muse+"\n"; if(muse==="Yes"||muse==="No"){text+="Copyrighted: "+copyright+"\nNarration: "+narration+"%\n";}}
+    if(details){text+="Details: "+details+"\n";}
   });
 
-  var reason=document.getElementById("reasonInput").value; if(reason){text+="\nReason:\n"+reason+"\n";}
-  if(document.getElementById("includePoliteNote").checked){text+="\nI kindly request your consideration and understanding regarding this case. Thank you!";}
+  let reason=document.getElementById("reasonInput").value;
+  if(reason) text+="\nReason:\n"+reason+"\n";
+  if(document.getElementById("includePoliteNote").checked) text+="\nI kindly request your consideration and understanding regarding this case. Thank you!";
   document.getElementById("finalOutput").textContent=text;
 }
 
 document.addEventListener("input",updatePreview);
 
-function copyPreview(){navigator.clipboard.writeText(document.getElementById("finalOutput").textContent); alert("Copied!");}
+// Copy button
+function copyPreview(){
+  const text=document.getElementById("finalOutput").textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const status=document.getElementById("copyStatus");
+    status.classList.remove("hidden");
+    setTimeout(()=>{status.classList.add("hidden");},2000);
+  });
+}
+document.getElementById("copyBtn").addEventListener("click",copyPreview);
 
-const dragbar=document.getElementById("dragbar"); const preview=document.getElementById("previewPanel");
-dragbar.addEventListener("mousedown",function(){document.addEventListener("mousemove",resize); document.addEventListener("mouseup",function(){document.removeEventListener("mousemove",resize)},{once:true});});
-function resize(e){let newWidth = window.innerWidth - e.clientX; preview.style.width=newWidth+"px";}
+// Drag resize
+const dragbar=document.getElementById("dragbar"), preview=document.getElementById("previewPanel");
+dragbar.addEventListener("mousedown",()=>{document.addEventListener("mousemove",resize); document.addEventListener("mouseup",()=>{document.removeEventListener("mousemove",resize);},{once:true});});
+function resize(e){preview.style.width=window.innerWidth-e.clientX+"px";}
 </script>
 </body>
 </html>
