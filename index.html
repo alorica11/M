@@ -121,6 +121,10 @@ textarea:focus,input:focus,select:focus{border-color:#1a73e8;box-shadow:0 0 0 1p
 <label class="flex items-center gap-2">
 <input type="checkbox" id="includePoliteNote"> Add polite note
 </label>
+<!-- Rephrase Button -->
+<button id="rephraseBtn" class="mt-3 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+Rephrase
+</button>
 </div>
 
 </div>
@@ -265,6 +269,19 @@ document.getElementById("copyBtn").addEventListener("click",copyPreview);
 const dragbar=document.getElementById("dragbar"), preview=document.getElementById("previewPanel");
 dragbar.addEventListener("mousedown",()=>{document.addEventListener("mousemove",resize); document.addEventListener("mouseup",()=>{document.removeEventListener("mousemove",resize);},{once:true});});
 function resize(e){preview.style.width=window.innerWidth-e.clientX+"px";}
+
+// --- Rephrase Button ---
+document.getElementById("rephraseBtn").addEventListener("click", () => {
+  const text = document.getElementById("finalOutput").textContent.trim();
+  if(!text){ alert("Your appeal text is empty."); return; }
+
+  const baseUrl = "https://www.google.com/ai"; 
+  const params = new URLSearchParams({
+    prompt: "Rephrase my message for me: " + text
+  });
+
+  window.open(baseUrl + "?" + params.toString(), "_blank");
+});
 </script>
 </body>
 </html>
