@@ -9,83 +9,132 @@
 
 <style>
 :root {
-  --bg:#0b0f14;
-  --card:#121821;
-  --text:#e6edf3;
-  --muted:#8b949e;
-  --accent:#4f9cff;
+  --bg1:#070A10;
+  --bg2:#0B1220;
+  --card: rgba(255,255,255,0.06);
+  --stroke: rgba(255,255,255,0.08);
+  --text:#EAF0F6;
+  --muted:#93A4B5;
+  --accent:#4F9CFF;
+}
+
+* {
+  box-sizing:border-box;
 }
 
 body {
   margin:0;
   font-family:Inter;
-  background:linear-gradient(135deg,#0b0f14,#111927);
   color:var(--text);
-  display:flex;
-  justify-content:center;
-  align-items:center;
   height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(79,156,255,0.25), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(120,80,255,0.18), transparent 45%),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+}
+
+/* subtle noise overlay */
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity:0.04;
+  pointer-events:none;
 }
 
 .container {
-  width:520px;
+  width:540px;
+  padding:28px;
+  border-radius:24px;
   background:var(--card);
-  padding:24px;
-  border-radius:18px;
+  border:1px solid var(--stroke);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
 }
 
+/* HEADER */
 h1 {
-  text-align:center;
   margin:0;
+  font-size:22px;
+  font-weight:600;
+  letter-spacing:-0.02em;
 }
 
 p {
-  text-align:center;
+  margin:6px 0 18px;
   color:var(--muted);
+  font-size:13px;
 }
 
 /* ICON GRID */
 .platform-icons {
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin:18px 0;
+  gap:14px;
+  margin:18px 0 22px;
 }
 
 .icon {
+  padding:14px 10px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
   text-align:center;
   cursor:pointer;
-  transition:0.2s;
-  padding:10px;
+  transition:0.25s ease;
+  position:relative;
+  overflow:hidden;
 }
 
 .icon:hover {
-  transform:translateY(-3px);
+  transform:translateY(-4px);
+  border-color:rgba(79,156,255,0.35);
+  box-shadow:0 10px 30px rgba(79,156,255,0.12);
 }
 
 .icon img {
-  width:56px;
-  height:56px;
-  border-radius:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.4);
+  width:52px;
+  height:52px;
+  border-radius:14px;
   background:white;
+  box-shadow:0 10px 25px rgba(0,0,0,0.35);
 }
 
 .icon span {
   display:block;
-  margin-top:6px;
+  margin-top:8px;
   font-size:12px;
   color:var(--muted);
 }
 
 /* INPUT */
+.input-wrap {
+  position:relative;
+}
+
 input {
   width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid #1f2933;
-  background:#0b0f14;
+  padding:14px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(0,0,0,0.35);
   color:white;
+  outline:none;
+  font-size:14px;
+  transition:0.2s;
+}
+
+input:focus {
+  border-color:rgba(79,156,255,0.6);
+  box-shadow:0 0 0 4px rgba(79,156,255,0.12);
+}
+
+input::placeholder {
+  color:#6f8196;
 }
 </style>
 </head>
@@ -95,9 +144,8 @@ input {
 <div class="container">
 
 <h1>Lark Launcher</h1>
-<p>Click icon or press Enter</p>
+<p>Tap an app or press Enter to launch instantly</p>
 
-<!-- ICONS -->
 <div class="platform-icons">
 
   <div class="icon" data-url="https://instagram.com">
@@ -132,7 +180,9 @@ input {
 
 </div>
 
-<input id="url" placeholder="Type URL or search..." />
+<div class="input-wrap">
+  <input id="url" placeholder="Type URL or search..." />
+</div>
 
 </div>
 
@@ -143,10 +193,8 @@ const APP_ID = "cli_a9187dead8e19dbb";
 const input = document.getElementById("url");
 const icons = document.querySelectorAll(".icon");
 
-/* normalize URL */
 function normalize(url) {
   if (!url) return "";
-
   url = url.trim();
 
   if (/^https?:\/\//i.test(url)) return url;
@@ -158,26 +206,24 @@ function normalize(url) {
   return "https://www.google.com/search?q=" + encodeURIComponent(url);
 }
 
-/* build Lark link */
 function buildLink(url) {
   return `https://applink.larksuite.com/client/web_app/open?appId=${APP_ID}&lk_target_url=${encodeURIComponent(url)}`;
 }
 
-/* open instantly */
 function openNow(raw) {
   const url = normalize(raw);
   const final = buildLink(url);
   window.location.href = final;
 }
 
-/* ICON CLICK = instant open */
+/* instant icon launch */
 icons.forEach(icon => {
   icon.addEventListener("click", () => {
     openNow(icon.dataset.url);
   });
 });
 
-/* ENTER = instant open */
+/* enter key launch */
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     openNow(input.value);
