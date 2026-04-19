@@ -50,7 +50,6 @@ p {
   margin-bottom: 20px;
 }
 
-/* GRID */
 .platform-icons {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -58,16 +57,13 @@ p {
   margin-bottom: 16px;
 }
 
-/* APP STYLE ICON */
 .icon {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
   transition: 0.2s;
-
   padding: 12px;
 }
 
@@ -75,23 +71,20 @@ p {
   transform: translateY(-3px);
 }
 
-/* REAL APP ICON LOOK */
 .icon img {
   width: 56px;
   height: 56px;
-  border-radius: 16px; /* App store style */
+  border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
   background: white;
 }
 
-/* LABEL */
 .icon span {
   margin-top: 6px;
   font-size: 12px;
   color: var(--muted);
 }
 
-/* ACTIVE */
 .icon.active img {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -119,7 +112,7 @@ input:focus {
 
 <div class="container">
   <h1>Lark Link Launcher</h1>
-  <p>Tap an app or paste a custom URL</p>
+  <p>Tap an app or paste a URL / search anything</p>
 
   <div class="platform-icons">
 
@@ -155,7 +148,7 @@ input:focus {
 
   </div>
 
-  <input id="url" placeholder="Paste custom URL or type anything..." />
+  <input id="url" placeholder="Type URL or search (Enter to open)" />
 </div>
 
 <script>
@@ -163,13 +156,38 @@ const APP_ID = "cli_a9187dead8e19dbb";
 const icons = document.querySelectorAll(".icon");
 const input = document.getElementById("url");
 
-let timer = null;
-
 function buildLink(url) {
   return `https://applink.larksuite.com/client/web_app/open?appId=${APP_ID}&lk_target_url=${encodeURIComponent(url)}`;
 }
 
-function openLink(url) {
+/**
+ * Smart input resolver:
+ * - google.com → https://google.com
+ * - https://... → keep
+ * - "hello world" → Google search
+ */
+function resolveInput(value) {
+  value = value.trim();
+
+  if (!value) return null;
+
+  // If it already looks like a full URL
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+
+  // If it looks like a domain
+  if (value.includes(".") && !value.includes(" ")) {
+    return "https://" + value;
+  }
+
+  // Otherwise treat as search
+  return "https://www.google.com/search?q=" + encodeURIComponent(value);
+}
+
+function openLink(raw) {
+  const url = resolveInput(raw);
+  if (!url) return;
   window.location.href = buildLink(url);
 }
 
@@ -181,21 +199,16 @@ icons.forEach(icon => {
   });
 });
 
+/* ONLY ENTER triggers navigation */
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    const val = input.value.trim();
-    if (val) openLink(val);
+    openLink(input.value);
   }
 });
 
-input.addEventListener("input", () => {
-  clearTimeout(timer);
-  const val = input.value.trim();
-  if (!val) return;
-
-  timer = setTimeout(() => {
-    openLink(val);
-  }, 700);
+/* Optional: auto-focus for faster launcher feel */
+window.addEventListener("load", () => {
+  input.focus();
 });
 </script>
 
