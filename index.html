@@ -1,235 +1,398 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lark Link Launcher</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Lark Link Launcher</title>
+    <!-- Premium Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #010204;
+            --card: rgba(10, 12, 18, 0.7);
+            --border: rgba(255, 255, 255, 0.07);
+            --accent: #818cf8;
+            --accent-glow: rgba(129, 140, 248, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #8a99ae;
+            --input-bg: rgba(0, 0, 0, 0.5);
+            /* Spring-like Easing (Bouncy but professional) */
+            --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Ultra Smooth Momentum Easing */
+            --momentum-easing: cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-<style>
-:root {
-  --bg1:#070A10;
-  --bg2:#0B1220;
-  --card: rgba(255,255,255,0.06);
-  --stroke: rgba(255,255,255,0.08);
-  --text:#EAF0F6;
-  --muted:#93A4B5;
-  --accent:#4F9CFF;
-}
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg);
+            overflow: hidden;
+            position: relative;
+        }
 
-* {
-  box-sizing:border-box;
-}
+        /* --- Dynamic Animated Ambient Background --- */
+        .ambient-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #0a0b14 0%, #010204 100%);
+        }
 
-body {
-  margin:0;
-  font-family:Inter;
-  color:var(--text);
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(79,156,255,0.25), transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(120,80,255,0.18), transparent 45%),
-    linear-gradient(135deg,var(--bg1),var(--bg2));
-}
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.25;
+            animation: float 25s infinite alternate ease-in-out;
+        }
 
-/* subtle noise overlay */
-body::before {
-  content:"";
-  position:fixed;
-  inset:0;
-  background-image:url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity:0.04;
-  pointer-events:none;
-}
+        .blob-1 {
+            width: 800px;
+            height: 800px;
+            background: #3730a3;
+            top: -10%;
+            left: -10%;
+        }
 
-.container {
-  width:540px;
-  padding:28px;
-  border-radius:24px;
-  background:var(--card);
-  border:1px solid var(--stroke);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-}
+        .blob-2 {
+            width: 700px;
+            height: 700px;
+            background: #1e1b4b;
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -5s;
+        }
 
-/* HEADER */
-h1 {
-  margin:0;
-  font-size:22px;
-  font-weight:600;
-  letter-spacing:-0.02em;
-}
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 50px) scale(1.15); }
+        }
 
-p {
-  margin:6px 0 18px;
-  color:var(--muted);
-  font-size:13px;
-}
+        /* Organic Grain Overlay */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: -1;
+        }
 
-/* ICON GRID */
-.platform-icons {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  margin:18px 0 22px;
-}
+        /* --- Main Launcher Card --- */
+        .launcher-card {
+            width: 540px;
+            padding: 56px;
+            border-radius: 40px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(50px) saturate(200%);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.03),
+                0 40px 120px -20px rgba(0, 0, 0, 0.9);
+            animation: cardEntrance 1s var(--momentum-easing);
+            position: relative;
+            overflow: hidden;
+        }
 
-.icon {
-  padding:14px 10px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.06);
-  text-align:center;
-  cursor:pointer;
-  transition:0.25s ease;
-  position:relative;
-  overflow:hidden;
-}
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
-.icon:hover {
-  transform:translateY(-4px);
-  border-color:rgba(79,156,255,0.35);
-  box-shadow:0 10px 30px rgba(79,156,255,0.12);
-}
+        /* Spotlight Effect (Follows mouse) */
+        .spotlight {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(129, 140, 248, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            transition: background 0.3s var(--momentum-easing);
+        }
 
-.icon img {
-  width:52px;
-  height:52px;
-  border-radius:14px;
-  background:white;
-  box-shadow:0 10px 25px rgba(0,0,0,0.35);
-}
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
 
-.icon span {
-  display:block;
-  margin-top:8px;
-  font-size:12px;
-  color:var(--muted);
-}
+        h1 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: 600;
+            letter-spacing: -0.05em;
+            background: linear-gradient(180deg, #FFFFFF 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-/* INPUT */
-.input-wrap {
-  position:relative;
-}
+        header p {
+            margin: 12px 0 0;
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
 
-input {
-  width:100%;
-  padding:14px 14px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,0.08);
-  background:rgba(0,0,0,0.35);
-  color:white;
-  outline:none;
-  font-size:14px;
-  transition:0.2s;
-}
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+            /* Support for momentum interaction feel */
+            will-change: transform;
+        }
 
-input:focus {
-  border-color:rgba(79,156,255,0.6);
-  box-shadow:0 0 0 4px rgba(79,156,255,0.12);
-}
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 12px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            /* Spring interaction transition */
+            transition: 
+                transform 0.6s var(--spring-easing), 
+                background-color 0.4s var(--momentum-easing),
+                border-color 0.4s var(--momentum-easing),
+                box-shadow 0.6s var(--momentum-easing);
+            position: relative;
+            user-select: none;
+        }
 
-input::placeholder {
-  color:#6f8196;
-}
-</style>
+        .app-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        .app-item:active {
+            transform: translateY(-2px) scale(0.97);
+            transition: transform 0.15s var(--momentum-easing);
+        }
+
+        .app-item img {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+            transition: transform 0.5s var(--spring-easing);
+        }
+
+        .app-item:hover img {
+            transform: scale(1.1) rotate(-3deg);
+        }
+
+        .app-item span {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: color 0.4s var(--momentum-easing);
+        }
+
+        .app-item:hover span {
+            color: #ffffff;
+        }
+
+        /* --- Input Section --- */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 22px;
+            color: var(--text-secondary);
+            opacity: 0.4;
+            transition: all 0.5s var(--momentum-easing);
+        }
+
+        input {
+            width: 100%;
+            height: 64px;
+            padding: 0 72px 0 60px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            color: white;
+            font-family: inherit;
+            font-size: 17px;
+            transition: all 0.5s var(--momentum-easing);
+            outline: none;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.4);
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.85);
+            box-shadow: 0 0 0 1px var(--accent), 0 0 30px rgba(129, 140, 248, 0.2);
+            padding-left: 64px;
+            transform: scale(1.01);
+        }
+
+        input:focus + .search-icon {
+            opacity: 1;
+            color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .enter-hint {
+            position: absolute;
+            right: 18px;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            padding: 7px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            opacity: 0.6;
+            pointer-events: none;
+            transition: all 0.5s var(--spring-easing);
+        }
+
+        input:focus ~ .enter-hint {
+            opacity: 1;
+            transform: scale(1.1);
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        /* Subtle Momentum container for apps */
+        .momentum-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none; /* Hide scrollbar for clean look */
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-overflow-scrolling: touch; /* Momentum scroll for touch */
+        }
+        .momentum-wrapper::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
-
-<h1>Lark Launcher</h1>
-<p>Tap an app or press Enter to launch instantly</p>
-
-<div class="platform-icons">
-
-  <div class="icon" data-url="https://instagram.com">
-    <img src="https://www.google.com/s2/favicons?domain=instagram.com&sz=128">
-    <span>Instagram</span>
-  </div>
-
-  <div class="icon" data-url="https://facebook.com">
-    <img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=128">
-    <span>Facebook</span>
-  </div>
-
-  <div class="icon" data-url="https://tiktok.com">
-    <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128">
-    <span>TikTok</span>
-  </div>
-
-  <div class="icon" data-url="https://youtube.com">
-    <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128">
-    <span>YouTube</span>
-  </div>
-
-  <div class="icon" data-url="https://github.com">
-    <img src="https://www.google.com/s2/favicons?domain=github.com&sz=128">
-    <span>GitHub</span>
-  </div>
-
-  <div class="icon" data-url="https://google.com">
-    <img src="https://www.google.com/s2/favicons?domain=google.com&sz=128">
-    <span>Google</span>
-  </div>
-
+<div class="ambient-mesh">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 </div>
+<div class="noise-overlay"></div>
 
-<div class="input-wrap">
-  <input id="url" placeholder="Type URL or search..." />
-</div>
+<div class="launcher-card" id="card">
+    <div class="spotlight" id="spotlight"></div>
+    <header>
+        <h1>Lark Launcher</h1>
+        <p>Your Intelligent Gateway</p>
+    </header>
 
+    <div class="momentum-wrapper">
+        <div class="app-grid">
+            <div class="app-item" data-url="https://instagram.com">
+                <img src="https://www.google.com/s2/favicons?domain=instagram.com&sz=128" alt="Instagram">
+                <span>Instagram</span>
+            </div>
+            <div class="app-item" data-url="https://facebook.com">
+                <img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=128" alt="Facebook">
+                <span>Facebook</span>
+            </div>
+            <div class="app-item" data-url="https://tiktok.com">
+                <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128" alt="TikTok">
+                <span>TikTok</span>
+            </div>
+            <div class="app-item" data-url="https://youtube.com">
+                <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128" alt="YouTube">
+                <span>YouTube</span>
+            </div>
+            <div class="app-item" data-url="https://policy-paste-pal.lovable.app/appeal">
+                <img src="https://www.google.com/s2/favicons?domain=lovable.app&sz=128" alt="Appeal">
+                <span>Appeal Gen</span>
+            </div>
+            <div class="app-item" data-url="https://google.com">
+                <img src="https://www.google.com/s2/favicons?domain=google.com&sz=128" alt="Google">
+                <span>Google</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input id="urlInput" placeholder="Describe or enter URL..." spellcheck="false" autocomplete="off" />
+        <span class="enter-hint">RETURN</span>
+    </div>
 </div>
 
 <script>
+    const APP_ID = "cli_a9187dead8e19dbb";
+    const input = document.getElementById("urlInput");
+    const items = document.querySelectorAll(".app-item");
+    const card = document.getElementById("card");
+    const spotlight = document.getElementById("spotlight");
 
-const APP_ID = "cli_a9187dead8e19dbb";
+    // Interactive Spotlight Logic with smooth tracking
+    card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        requestAnimationFrame(() => {
+            spotlight.style.setProperty("--x", `${x}%`);
+            spotlight.style.setProperty("--y", `${y}%`);
+        });
+    });
 
-const input = document.getElementById("url");
-const icons = document.querySelectorAll(".icon");
+    function normalizeURL(url) {
+        if (!url) return "";
+        url = url.trim();
+        if (/^https?:\/\//i.test(url)) return url;
+        if (url.includes(".") && !url.includes(" ")) return "https://" + url;
+        return "https://www.google.com/search?q=" + encodeURIComponent(url);
+    }
 
-function normalize(url) {
-  if (!url) return "";
-  url = url.trim();
+    function launch(rawUrl) {
+        if (!rawUrl) return;
+        
+        const finalUrl = normalizeURL(rawUrl);
+        const finalLink = `https://applink.larksuite.com/client/web_app/open?appId=${APP_ID}&lk_target_url=${encodeURIComponent(finalUrl)}`;
+        
+        // Final feedback with bouncy return
+        input.style.transform = "scale(0.95)";
+        input.style.opacity = "0.4";
+        
+        setTimeout(() => {
+            window.location.href = finalLink;
+        }, 150);
+    }
 
-  if (/^https?:\/\//i.test(url)) return url;
+    items.forEach(item => {
+        item.addEventListener("click", () => launch(item.getAttribute("data-url")));
+    });
 
-  if (url.includes(".") && !url.includes(" ")) {
-    return "https://" + url;
-  }
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") launch(input.value);
+    });
 
-  return "https://www.google.com/search?q=" + encodeURIComponent(url);
-}
-
-function buildLink(url) {
-  return `https://applink.larksuite.com/client/web_app/open?appId=${APP_ID}&lk_target_url=${encodeURIComponent(url)}`;
-}
-
-function openNow(raw) {
-  const url = normalize(raw);
-  const final = buildLink(url);
-  window.location.href = final;
-}
-
-/* instant icon launch */
-icons.forEach(icon => {
-  icon.addEventListener("click", () => {
-    openNow(icon.dataset.url);
-  });
-});
-
-/* enter key launch */
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    openNow(input.value);
-  }
-});
-
+    window.onload = () => input.focus();
 </script>
 
 </body>
