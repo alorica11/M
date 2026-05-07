@@ -1,354 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Hidden Launcher</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title></title>
 
 <style>
-    :root {
-        --bg: #010204;
-        --card: rgba(10, 12, 18, 0.7);
-        --border: rgba(255, 255, 255, 0.07);
-        --accent: #818cf8;
-        --text-primary: #ffffff;
-        --text-secondary: #8a99ae;
-        --input-bg: rgba(0, 0, 0, 0.5);
-        --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        --momentum-easing: cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    body{
+        margin:0;
+        width:100vw;
+        height:100vh;
+        background:white;
+        overflow:hidden;
 
-    * {
-        box-sizing: border-box;
-        -webkit-font-smoothing: antialiased;
-    }
-
-    body {
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        height: 100vh;
-        overflow: hidden;
-        background: white;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Hidden Background Effects */
-    .ambient-mesh,
-    .noise-overlay {
-        display: none;
-    }
-
-    .ambient-mesh {
-        position: fixed;
-        inset: 0;
-        z-index: -2;
-        overflow: hidden;
-        background: radial-gradient(circle at 50% 50%, #0a0b14 0%, #010204 100%);
-    }
-
-    .blob {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(140px);
-        opacity: 0.25;
-        animation: float 25s infinite alternate ease-in-out;
-    }
-
-    .blob-1 {
-        width: 800px;
-        height: 800px;
-        background: #3730a3;
-        top: -10%;
-        left: -10%;
-    }
-
-    .blob-2 {
-        width: 700px;
-        height: 700px;
-        background: #1e1b4b;
-        bottom: -10%;
-        right: -10%;
-        animation-delay: -5s;
-    }
-
-    @keyframes float {
-        0% { transform: translate(0,0) scale(1); }
-        100% { transform: translate(100px,50px) scale(1.15); }
-    }
-
-    .noise-overlay {
-        position: fixed;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-        opacity: 0.05;
-        pointer-events: none;
-        z-index: -1;
+        display:flex;
+        align-items:center;
+        justify-content:center;
     }
 
     /* Hidden Launcher */
-    .launcher-card {
-        width: 540px;
-        padding: 56px;
-        border-radius: 40px;
-        background: var(--card);
-        border: 1px solid var(--border);
-        backdrop-filter: blur(50px) saturate(200%);
-        box-shadow:
-            0 0 0 1px rgba(255,255,255,0.03),
-            0 40px 120px -20px rgba(0,0,0,0.9);
+    #launcher{
+        position:fixed;
+        inset:0;
 
-        display: none;
-        opacity: 0;
-        transform: scale(0.95);
+        display:none;
 
-        position: relative;
-        overflow: hidden;
+        background:#0b1020;
+
+        align-items:center;
+        justify-content:center;
+
+        z-index:9999;
     }
 
-    .spotlight {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(129, 140, 248, 0.08) 0%, transparent 50%);
-        pointer-events: none;
+    .box{
+        width:520px;
+
+        background:rgba(255,255,255,0.05);
+
+        border:1px solid rgba(255,255,255,0.08);
+
+        border-radius:24px;
+
+        padding:35px;
+
+        backdrop-filter:blur(30px);
     }
 
-    header {
-        text-align: center;
-        margin-bottom: 48px;
+    .apps{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:18px;
+        margin-bottom:22px;
     }
 
-    h1 {
-        margin: 0;
-        font-size: 36px;
-        font-weight: 600;
-        letter-spacing: -0.05em;
-        background: linear-gradient(180deg, #FFFFFF 0%, #94a3b8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .app{
+        background:rgba(255,255,255,0.05);
+
+        border-radius:18px;
+
+        padding:20px;
+
+        text-align:center;
+
+        cursor:pointer;
+
+        transition:0.2s;
     }
 
-    header p {
-        margin-top: 12px;
-        color: var(--text-secondary);
-        font-size: 16px;
+    .app:hover{
+        transform:translateY(-4px);
+        background:rgba(255,255,255,0.09);
     }
 
-    .app-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-        margin-bottom: 48px;
+    .app img{
+        width:42px;
+        height:42px;
+        margin-bottom:10px;
     }
 
-    .app-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        padding: 28px 12px;
-
-        border-radius: 28px;
-        background: rgba(255,255,255,0.02);
-        border: 1px solid rgba(255,255,255,0.05);
-
-        cursor: pointer;
-
-        transition:
-            transform 0.6s var(--spring-easing),
-            background-color 0.4s var(--momentum-easing);
-
-        user-select: none;
+    .app span{
+        display:block;
+        font-size:12px;
+        color:white;
+        font-family:Arial,sans-serif;
     }
 
-    .app-item:hover {
-        transform: translateY(-8px) scale(1.05);
-        background: rgba(255,255,255,0.07);
+    input{
+        width:100%;
+        height:58px;
+
+        border:none;
+        outline:none;
+
+        border-radius:18px;
+
+        background:rgba(0,0,0,0.4);
+
+        color:white;
+
+        font-size:16px;
+
+        padding:0 20px;
+
+        box-sizing:border-box;
     }
-
-    .app-item img {
-        width: 52px;
-        height: 52px;
-        border-radius: 16px;
-        margin-bottom: 16px;
-    }
-
-    .app-item span {
-        color: white;
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .search-container {
-        position: relative;
-    }
-
-    input {
-        width: 100%;
-        height: 64px;
-        padding: 0 24px;
-
-        background: var(--input-bg);
-        border: 1px solid var(--border);
-        border-radius: 22px;
-
-        color: white;
-        font-size: 17px;
-        font-family: inherit;
-
-        outline: none;
-    }
-
-    input:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 1px var(--accent);
-    }
-
 </style>
 </head>
 
 <body>
 
-<div class="ambient-mesh">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-</div>
+<div id="launcher">
 
-<div class="noise-overlay"></div>
+    <div class="box">
 
-<div class="launcher-card" id="card">
+        <div class="apps">
 
-    <div class="spotlight" id="spotlight"></div>
+            <div class="app" data-url="https://google.com">
+                <img src="https://www.google.com/s2/favicons?domain=google.com&sz=128">
+                <span>Google</span>
+            </div>
 
-    <header>
-        <h1>Lark Launcher</h1>
-        <p>Your Intelligent Gateway</p>
-    </header>
+            <div class="app" data-url="https://youtube.com">
+                <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128">
+                <span>YouTube</span>
+            </div>
 
-    <div class="app-grid">
+            <div class="app" data-url="https://facebook.com">
+                <img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=128">
+                <span>Facebook</span>
+            </div>
 
-        <div class="app-item" data-url="https://instagram.com">
-            <img src="https://www.google.com/s2/favicons?domain=instagram.com&sz=128">
-            <span>Instagram</span>
+            <div class="app" data-url="https://instagram.com">
+                <img src="https://www.google.com/s2/favicons?domain=instagram.com&sz=128">
+                <span>Instagram</span>
+            </div>
+
+            <div class="app" data-url="https://tiktok.com">
+                <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128">
+                <span>TikTok</span>
+            </div>
+
+            <div class="app" data-url="https://openai.com">
+                <img src="https://www.google.com/s2/favicons?domain=openai.com&sz=128">
+                <span>AI</span>
+            </div>
+
         </div>
 
-        <div class="app-item" data-url="https://facebook.com">
-            <img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=128">
-            <span>Facebook</span>
-        </div>
+        <input id="search" placeholder="Search or enter URL">
 
-        <div class="app-item" data-url="https://youtube.com">
-            <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128">
-            <span>YouTube</span>
-        </div>
-
-        <div class="app-item" data-url="https://google.com">
-            <img src="https://www.google.com/s2/favicons?domain=google.com&sz=128">
-            <span>Google</span>
-        </div>
-
-        <div class="app-item" data-url="https://tiktok.com">
-            <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128">
-            <span>TikTok</span>
-        </div>
-
-        <div class="app-item" data-url="https://openai.com">
-            <img src="https://www.google.com/s2/favicons?domain=openai.com&sz=128">
-            <span>AI</span>
-        </div>
-
-    </div>
-
-    <div class="search-container">
-        <input id="urlInput" placeholder="Enter URL or search..." autocomplete="off"/>
     </div>
 
 </div>
 
 <script>
 
-const APP_ID = "cli_a9187dead8e19dbb";
+const launcher = document.getElementById("launcher");
+const input = document.getElementById("search");
 
-const input = document.getElementById("urlInput");
-const items = document.querySelectorAll(".app-item");
-const card = document.getElementById("card");
+let code = "";
 
-let secretCode = "";
+/* SECRET OPEN */
+document.addEventListener("keydown",(e)=>{
 
-/* SECRET ACTIVATION */
-document.addEventListener("keydown", (e) => {
+    if(e.key.length > 1) return;
 
-    if (e.key.length > 1) return;
+    code += e.key;
 
-    secretCode += e.key;
+    code = code.slice(-2);
 
-    secretCode = secretCode.slice(-2);
-
-    if (secretCode === "99") {
-
-        document.querySelector(".ambient-mesh").style.display = "block";
-        document.querySelector(".noise-overlay").style.display = "block";
-
-        card.style.display = "block";
-
-        requestAnimationFrame(() => {
-            card.style.transition = "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)";
-            card.style.opacity = "1";
-            card.style.transform = "scale(1)";
-        });
-
+    if(code === "99"){
+        launcher.style.display = "flex";
         input.focus();
     }
+
 });
 
-/* URL NORMALIZER */
-function normalizeURL(url) {
+/* OPEN URL */
+function openURL(value){
 
-    if (!url) return "";
+    if(!value) return;
 
-    url = url.trim();
+    let final = value.trim();
 
-    if (/^https?:\/\//i.test(url)) return url;
+    if(!/^https?:\/\//i.test(final)){
 
-    if (url.includes(".") && !url.includes(" ")) {
-        return "https://" + url;
+        if(final.includes("."))
+            final = "https://" + final;
+
+        else
+            final = "https://www.google.com/search?q=" + encodeURIComponent(final);
     }
 
-    return "https://www.google.com/search?q=" + encodeURIComponent(url);
+    window.location.href = final;
 }
-
-/* LAUNCH */
-function launch(rawUrl) {
-
-    if (!rawUrl) return;
-
-    const finalUrl = normalizeURL(rawUrl);
-
-    const finalLink =
-        `https://applink.larksuite.com/client/web_app/open?appId=${APP_ID}&lk_target_url=${encodeURIComponent(finalUrl)}`;
-
-    window.location.href = finalLink;
-}
-
-/* GRID ITEMS */
-items.forEach(item => {
-    item.addEventListener("click", () => {
-        launch(item.getAttribute("data-url"));
-    });
-});
 
 /* ENTER SEARCH */
-input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        launch(input.value);
+input.addEventListener("keydown",(e)=>{
+    if(e.key === "Enter"){
+        openURL(input.value);
     }
+});
+
+/* APP CLICKS */
+document.querySelectorAll(".app").forEach(app=>{
+
+    app.addEventListener("click",()=>{
+
+        openURL(app.dataset.url);
+
+    });
+
+});
+
+/* ESC TO HIDE */
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key === "Escape"){
+
+        launcher.style.display = "none";
+
+    }
+
 });
 
 </script>
