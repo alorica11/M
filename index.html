@@ -281,8 +281,41 @@ const items = document.querySelectorAll(".app-item");
 const card = document.getElementById("card");
 
 let secretCode = "";
+let inactivityTimer;
 
-/* SECRET ACTIVATION */
+/* ---------------- AUTO HIDE ---------------- */
+
+function hideLauncher() {
+
+    card.style.opacity = "0";
+    card.style.transform = "scale(0.95)";
+
+    setTimeout(() => {
+        card.style.display = "none";
+
+        document.querySelector(".ambient-mesh").style.display = "none";
+        document.querySelector(".noise-overlay").style.display = "none";
+
+        input.value = "";
+        secretCode = "";
+
+    }, 300);
+}
+
+function resetInactivityTimer() {
+
+    clearTimeout(inactivityTimer);
+
+    if (card.style.display === "block") {
+
+        inactivityTimer = setTimeout(() => {
+            hideLauncher();
+        }, 10000); // 10 seconds
+    }
+}
+
+/* ---------------- SECRET ACTIVATION ---------------- */
+
 document.addEventListener("keydown", (e) => {
 
     if (e.key.length > 1) return;
@@ -305,10 +338,27 @@ document.addEventListener("keydown", (e) => {
         });
 
         input.focus();
+
+        resetInactivityTimer();
     }
+
+    /* Reset timer while typing */
+    resetInactivityTimer();
 });
 
-/* URL NORMALIZER */
+/* ---------------- ACTIVITY DETECTION ---------------- */
+
+["mousemove", "click", "touchstart"].forEach(event => {
+
+    document.addEventListener(event, () => {
+
+        resetInactivityTimer();
+
+    });
+});
+
+/* ---------------- URL NORMALIZER ---------------- */
+
 function normalizeURL(url) {
 
     if (!url) return "";
@@ -324,7 +374,8 @@ function normalizeURL(url) {
     return "https://www.google.com/search?q=" + encodeURIComponent(url);
 }
 
-/* LAUNCH */
+/* ---------------- LAUNCH ---------------- */
+
 function launch(rawUrl) {
 
     if (!rawUrl) return;
@@ -337,15 +388,24 @@ function launch(rawUrl) {
     window.location.href = finalLink;
 }
 
-/* GRID ITEMS */
+/* ---------------- GRID ITEMS ---------------- */
+
 items.forEach(item => {
+
     item.addEventListener("click", () => {
+
+        resetInactivityTimer();
+
         launch(item.getAttribute("data-url"));
     });
 });
 
-/* ENTER SEARCH */
+/* ---------------- ENTER SEARCH ---------------- */
+
 input.addEventListener("keydown", (e) => {
+
+    resetInactivityTimer();
+
     if (e.key === "Enter") {
         launch(input.value);
     }
