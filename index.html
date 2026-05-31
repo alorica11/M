@@ -8,270 +8,407 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-:root {
-    --bg: #010204;
-    --card: rgba(10, 12, 18, 0.7);
-    --border: rgba(255, 255, 255, 0.07);
-    --accent: #818cf8;
-    --text-primary: #ffffff;
-    --text-secondary: #8a99ae;
-    --input-bg: rgba(0, 0, 0, 0.5);
-    --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --momentum-easing: cubic-bezier(0.16, 1, 0.3, 1);
-}
+    :root {
+        --bg: #010204;
+        --card: rgba(10, 12, 18, 0.7);
+        --border: rgba(255, 255, 255, 0.07);
+        --accent: #818cf8;
+        --text-primary: #ffffff;
+        --text-secondary: #8a99ae;
+        --input-bg: rgba(0, 0, 0, 0.5);
+        --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        --momentum-easing: cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    * {
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+    }
 
-body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    height: 100vh;
-    overflow: hidden;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        background: white;
 
-/* Launcher */
-.launcher-card {
-    width: 540px;
-    padding: 56px;
-    border-radius: 40px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(50px) saturate(200%);
-    box-shadow: 0 40px 120px -20px rgba(0,0,0,0.9);
-    display: none;
-    opacity: 0;
-    transform: scale(0.95);
-    position: relative;
-}
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-/* Tabs */
-.tabs {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
+    /* Hidden Background Effects */
+    .ambient-mesh,
+    .noise-overlay {
+        display: none;
+    }
 
-.tab-btn {
-    padding: 8px 14px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
-}
+    .ambient-mesh {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        overflow: hidden;
+        background: radial-gradient(circle at 50% 50%, #0a0b14 0%, #010204 100%);
+    }
 
-.tab-btn.active {
-    color: white;
-    background: rgba(129,140,248,0.2);
-    border-color: var(--accent);
-}
+    .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.25;
+        animation: float 25s infinite alternate ease-in-out;
+    }
 
-/* Grid */
-.app-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    margin-bottom: 30px;
-    display: none;
-}
+    .blob-1 {
+        width: 800px;
+        height: 800px;
+        background: #3730a3;
+        top: -10%;
+        left: -10%;
+    }
 
-.app-grid.active {
-    display: grid;
-}
+    .blob-2 {
+        width: 700px;
+        height: 700px;
+        background: #1e1b4b;
+        bottom: -10%;
+        right: -10%;
+        animation-delay: -5s;
+    }
 
-.app-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 10px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
-    cursor: pointer;
-    transition: 0.3s;
-}
+    @keyframes float {
+        0% { transform: translate(0,0) scale(1); }
+        100% { transform: translate(100px,50px) scale(1.15); }
+    }
 
-.app-item:hover {
-    transform: translateY(-6px);
-    background: rgba(255,255,255,0.07);
-}
+    .noise-overlay {
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        opacity: 0.05;
+        pointer-events: none;
+        z-index: -1;
+    }
 
-.app-item img {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-}
+    /* Hidden Launcher */
+    .launcher-card {
+        width: 540px;
+        padding: 56px;
+        border-radius: 40px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(50px) saturate(200%);
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,0.03),
+            0 40px 120px -20px rgba(0,0,0,0.9);
 
-.app-item span {
-    font-size: 11px;
-    color: white;
-    text-align: center;
-}
+        display: none;
+        opacity: 0;
+        transform: scale(0.95);
 
-/* Input */
-input {
-    width: 100%;
-    height: 56px;
-    padding: 0 20px;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    color: white;
-    outline: none;
-}
+        position: relative;
+        overflow: hidden;
+    }
+
+    .spotlight {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(129, 140, 248, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 48px;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 36px;
+        font-weight: 600;
+        letter-spacing: -0.05em;
+        background: linear-gradient(180deg, #FFFFFF 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+        margin-top: 12px;
+        color: var(--text-secondary);
+        font-size: 16px;
+    }
+
+    .app-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 48px;
+    }
+
+    .app-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        padding: 28px 12px;
+
+        border-radius: 28px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05);
+
+        cursor: pointer;
+
+        transition:
+            transform 0.6s var(--spring-easing),
+            background-color 0.4s var(--momentum-easing);
+
+        user-select: none;
+    }
+
+    .app-item:hover {
+        transform: translateY(-8px) scale(1.05);
+        background: rgba(255,255,255,0.07);
+    }
+
+    .app-item img {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+    }
+
+    .app-item span {
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .search-container {
+        position: relative;
+    }
+
+    input {
+        width: 100%;
+        height: 64px;
+        padding: 0 24px;
+
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+
+        color: white;
+        font-size: 17px;
+        font-family: inherit;
+
+        outline: none;
+    }
+
+    input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent);
+    }
+
 </style>
 </head>
 
 <body>
 
+<div class="ambient-mesh">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+</div>
+
+<div class="noise-overlay"></div>
+
 <div class="launcher-card" id="card">
 
-<header>
-    <h1 style="text-align:center; color:white;">Lark Launcher</h1>
-</header>
+    <div class="spotlight" id="spotlight"></div>
 
-<!-- Tabs -->
-<div class="tabs">
-    <div class="tab-btn active" onclick="switchTab('apps')">Apps</div>
-    <div class="tab-btn" onclick="switchTab('games')">Games</div>
-</div>
+    <header>
+        <h1>Lark Launcher</h1>
+        <p>Your Intelligent Gateway</p>
+    </header>
 
-<!-- APPS -->
-<div class="app-grid active" id="apps">
+    <div class="app-grid">
 
-    <div class="app-item" data-url="https://instagram.com">
-        <img src="https://www.google.com/s2/favicons?domain=instagram.com&sz=128">
-        <span>Instagram</span>
+        <div class="app-item" data-url="https://instagram.com">
+            <img src="https://www.google.com/s2/favicons?domain=instagram.com&sz=128">
+            <span>Instagram</span>
+        </div>
+
+        <div class="app-item" data-url="https://facebook.com">
+            <img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=128">
+            <span>Facebook</span>
+        </div>
+
+        <div class="app-item" data-url="https://youtube.com">
+            <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128">
+            <span>YouTube</span>
+        </div>
+
+        <div class="app-item" data-url="https://google.com">
+            <img src="https://www.google.com/s2/favicons?domain=google.com&sz=128">
+            <span>Google</span>
+        </div>
+
+        <div class="app-item" data-url="https://tiktok.com">
+            <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128">
+            <span>TikTok</span>
+        </div>
+
+        <div class="app-item" data-url="https://openai.com">
+            <img src="https://www.google.com/s2/favicons?domain=openai.com&sz=128">
+            <span>AI</span>
+        </div>
+
     </div>
 
-    <div class="app-item" data-url="https://facebook.com">
-        <img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=128">
-        <span>Facebook</span>
+    <div class="search-container">
+        <input id="urlInput" placeholder="Enter URL or search..." autocomplete="off"/>
     </div>
-
-    <div class="app-item" data-url="https://youtube.com">
-        <img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128">
-        <span>YouTube</span>
-    </div>
-
-    <div class="app-item" data-url="https://google.com">
-        <img src="https://www.google.com/s2/favicons?domain=google.com&sz=128">
-        <span>Google</span>
-    </div>
-
-    <div class="app-item" data-url="https://tiktok.com">
-        <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128">
-        <span>TikTok</span>
-    </div>
-
-    <div class="app-item" data-url="https://openai.com">
-        <img src="https://www.google.com/s2/favicons?domain=openai.com&sz=128">
-        <span>AI</span>
-    </div>
-
-</div>
-
-<!-- GAMES -->
-<div class="app-grid" id="games">
-
-    <div class="app-item" data-url="https://agar.io"><img src="https://www.google.com/s2/favicons?domain=agar.io&sz=128"><span>Agar.io</span></div>
-    <div class="app-item" data-url="https://slither.io"><img src="https://www.google.com/s2/favicons?domain=slither.io&sz=128"><span>Slither.io</span></div>
-    <div class="app-item" data-url="https://krunker.io"><img src="https://www.google.com/s2/favicons?domain=krunker.io&sz=128"><span>Krunker</span></div>
-    <div class="app-item" data-url="https://diep.io"><img src="https://www.google.com/s2/favicons?domain=diep.io&sz=128"><span>Diep.io</span></div>
-    <div class="app-item" data-url="https://shellshock.io"><img src="https://www.google.com/s2/favicons?domain=shellshock.io&sz=128"><span>ShellShock</span></div>
-    <div class="app-item" data-url="https://paper.io"><img src="https://www.google.com/s2/favicons?domain=paper.io&sz=128"><span>Paper.io</span></div>
-    <div class="app-item" data-url="https://slopegame.net"><img src="https://www.google.com/s2/favicons?domain=slopegame.net&sz=128"><span>Slope</span></div>
-    <div class="app-item" data-url="https://littlealchemy.com"><img src="https://www.google.com/s2/favicons?domain=littlealchemy.com&sz=128"><span>Alchemy</span></div>
-    <div class="app-item" data-url="https://geoguessr.com"><img src="https://www.google.com/s2/favicons?domain=geoguessr.com&sz=128"><span>GeoGuessr</span></div>
-    <div class="app-item" data-url="https://bonk.io"><img src="https://www.google.com/s2/favicons?domain=bonk.io&sz=128"><span>Bonk.io</span></div>
-    <div class="app-item" data-url="https://www.crazygames.com/game/minecraft-classic"><img src="https://www.google.com/s2/favicons?domain=crazygames.com&sz=128"><span>Minecraft</span></div>
-    <div class="app-item" data-url="https://poki.com/en/g/8-ball-pool"><img src="https://www.google.com/s2/favicons?domain=poki.com&sz=128"><span>8 Ball Pool</span></div>
-    <div class="app-item" data-url="https://tanktrouble.com"><img src="https://www.google.com/s2/favicons?domain=tanktrouble.com&sz=128"><span>Tank Trouble</span></div>
-    <div class="app-item" data-url="https://cookieclicker.com"><img src="https://www.google.com/s2/favicons?domain=cookieclicker.com&sz=128"><span>Cookie Clicker</span></div>
-    <div class="app-item" data-url="https://surviv.io"><img src="https://www.google.com/s2/favicons?domain=surviv.io&sz=128"><span>Surviv.io</span></div>
-    <div class="app-item" data-url="https://www.crazygames.com/game/uno-online"><img src="https://www.google.com/s2/favicons?domain=crazygames.com&sz=128"><span>UNO</span></div>
-    <div class="app-item" data-url="https://marioemulator.net"><img src="https://www.google.com/s2/favicons?domain=marioemulator.net&sz=128"><span>Mario</span></div>
-    <div class="app-item" data-url="https://www.crazygames.com/game/bullet-force-multiplayer"><img src="https://www.google.com/s2/favicons?domain=crazygames.com&sz=128"><span>Bullet Force</span></div>
-    <div class="app-item" data-url="https://roblox.com"><img src="https://www.google.com/s2/favicons?domain=roblox.com&sz=128"><span>Roblox</span></div>
-    <div class="app-item" data-url="https://poki.com"><img src="https://www.google.com/s2/favicons?domain=poki.com&sz=128"><span>Poki Games</span></div>
-
-</div>
-
-<input id="urlInput" placeholder="Enter URL or search..." />
 
 </div>
 
 <script>
 
-const card = document.getElementById("card");
+const APP_ID = "cli_a9187dead8e19dbb";
+
 const input = document.getElementById("urlInput");
 const items = document.querySelectorAll(".app-item");
+const card = document.getElementById("card");
 
 let secretCode = "";
+let inactivityTimer;
 
-/* Tabs */
-function switchTab(tab) {
-    document.getElementById("apps").classList.remove("active");
-    document.getElementById("games").classList.remove("active");
+/* ---------------- AUTO HIDE ---------------- */
 
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+function hideLauncher() {
 
-    if (tab === "apps") {
-        document.getElementById("apps").classList.add("active");
-        document.querySelectorAll(".tab-btn")[0].classList.add("active");
-    } else {
-        document.getElementById("games").classList.add("active");
-        document.querySelectorAll(".tab-btn")[1].classList.add("active");
+    card.style.opacity = "0";
+    card.style.transform = "scale(0.95)";
+
+    setTimeout(() => {
+        card.style.display = "none";
+
+        document.querySelector(".ambient-mesh").style.display = "none";
+        document.querySelector(".noise-overlay").style.display = "none";
+
+        input.value = "";
+        secretCode = "";
+
+    }, 300);
+}
+
+function resetInactivityTimer() {
+
+    clearTimeout(inactivityTimer);
+
+    if (card.style.display === "block") {
+
+        inactivityTimer = setTimeout(() => {
+            hideLauncher();
+        }, 10000); // 10 seconds
     }
 }
 
-/* Secret open */
+/* ---------------- SECRET ACTIVATION ---------------- */
+
 document.addEventListener("keydown", (e) => {
+
     if (e.key.length > 1) return;
 
     secretCode += e.key;
+
     secretCode = secretCode.slice(-2);
 
     if (secretCode === "bb") {
+
+        document.querySelector(".ambient-mesh").style.display = "block";
+        document.querySelector(".noise-overlay").style.display = "block";
+
         card.style.display = "block";
-        setTimeout(() => {
+
+        requestAnimationFrame(() => {
+            card.style.transition = "all 0.45s cubic-bezier(0.16, 1, 0.3, 1)";
             card.style.opacity = "1";
             card.style.transform = "scale(1)";
-        }, 50);
+        });
+
         input.focus();
+
+        resetInactivityTimer();
     }
+
+    /* Reset timer while typing */
+    resetInactivityTimer();
 });
 
-/* Launch */
+/* ---------------- ACTIVITY DETECTION ---------------- */
+
+["mousemove", "click", "touchstart"].forEach(event => {
+
+    document.addEventListener(event, () => {
+
+        resetInactivityTimer();
+
+    });
+});
+
+/* ---------------- URL NORMALIZER ---------------- */
+
 function normalizeURL(url) {
+
     if (!url) return "";
+
+    url = url.trim();
+
     if (/^https?:\/\//i.test(url)) return url;
-    if (url.includes(".")) return "https://" + url;
+
+    if (url.includes(".") && !url.includes(" ")) {
+        return "https://" + url;
+    }
+
     return "https://www.google.com/search?q=" + encodeURIComponent(url);
 }
 
-function launch(url) {
-    const final = normalizeURL(url);
-    window.location.href = final;
+/* ---------------- LAUNCH ---------------- */
+
+function launch(rawUrl) {
+
+    if (!rawUrl) return;
+
+    const finalUrl = normalizeURL(rawUrl);
+
+    const finalLink =
+        `https://applink.larksuite.com/client/web_app/open?appId=${APP_ID}&lk_target_url=${encodeURIComponent(finalUrl)}`;
+
+    window.location.href = finalLink;
 }
 
-/* Click items */
-items.forEach(i => {
-    i.addEventListener("click", () => launch(i.dataset.url));
+/* ---------------- GRID ITEMS ---------------- */
+
+items.forEach(item => {
+
+    item.addEventListener("click", () => {
+
+        resetInactivityTimer();
+
+        launch(item.getAttribute("data-url"));
+    });
 });
 
-/* Enter search */
+/* ---------------- ENTER SEARCH ---------------- */
+
 input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") launch(input.value);
+
+    resetInactivityTimer();
+
+    if (e.key === "Enter") {
+        launch(input.value);
+    }
 });
 
 </script>
