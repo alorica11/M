@@ -270,6 +270,7 @@ input:focus {
 </div>
 
 <script>
+
 const card = document.getElementById("card");
 const input = document.getElementById("urlInput");
 
@@ -298,23 +299,23 @@ tabs.forEach(btn => {
     });
 });
 
-/* OPEN APP/ GAME IN NEW TAB */
+/* OPEN APP */
 items.forEach(item => {
     item.addEventListener("click", () => {
-        window.open(item.dataset.url, "_blank", "noopener,noreferrer");
+        window.location.href = item.dataset.url;
     });
 });
 
-/* SEARCH - open in new tab */
+/* SEARCH */
 input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-        let url = input.value.trim();
+        let url = input.value;
 
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        if (!url.includes("http")) {
             url = "https://www.google.com/search?q=" + encodeURIComponent(url);
         }
 
-        window.open(url, "_blank", "noopener,noreferrer");
+        window.location.href = url;
     }
 });
 
@@ -337,6 +338,7 @@ document.addEventListener("keydown", (e) => {
         });
     }
 });
+
 </script>
 
 </body>
